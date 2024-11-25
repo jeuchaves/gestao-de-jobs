@@ -13,13 +13,35 @@ import {
 } from "@mui/material";
 import { IStepsProps } from "../AddJobs";
 import { useDropzone } from "react-dropzone";
+import { parseCsv } from "../../../services/parsers/parseCsv";
+import { useState } from "react";
+
+interface ICsvData {
+  n__doc: number;
+  tipo_doc: string;
+  titulo: string;
+  projeto: string;
+  status: string;
+  situacao_do_job: string;
+  prazo: string;
+}
 
 export const UploadCsv: React.FC<IStepsProps> = ({
   handleBack,
   handleNext,
 }) => {
-  const onDrop = (acceptedFiles: File[]) => {
-    console.log(acceptedFiles);
+  const [csvData, setCsvData] = useState<ICsvData[]>([]);
+
+  const onDrop = async (acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+
+    try {
+      const data = await parseCsv<ICsvData>(file);
+      console.log(data);
+      setCsvData(data);
+    } catch (error) {
+      console.error("Erro ao processar o arquivo: ", error);
+    }
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -31,7 +53,7 @@ export const UploadCsv: React.FC<IStepsProps> = ({
   });
 
   return (
-    <Container>
+    <Container sx={{ py: 4 }}>
       <Typography variant="h3" gutterBottom>
         Fazer upload do CSV
       </Typography>
@@ -82,15 +104,43 @@ export const UploadCsv: React.FC<IStepsProps> = ({
         >
           <input {...getInputProps()} />
           {isDragActive ? (
-            <Typography>Solte o arquivo aqui...</Typography>
+            <Typography textAlign="center">Solte o arquivo aqui...</Typography>
           ) : (
-            <Typography>
+            <Typography textAlign="center">
               Arraste e solte o arquivo CSV aqui, ou clique para selecionar o
               arquivo
             </Typography>
           )}
         </Box>
       </Box>
+      <TableContainer component={Paper} sx={{ mt: 4 }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Nº Doc</TableCell>
+              <TableCell>Tipo Doc</TableCell>
+              <TableCell>Título</TableCell>
+              <TableCell>Projeto</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Situação do Job</TableCell>
+              <TableCell>Prazo</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {csvData.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell>{row.n__doc}</TableCell>
+                <TableCell>{row.tipo_doc}</TableCell>
+                <TableCell>{row.titulo}</TableCell>
+                <TableCell>{row.projeto}</TableCell>
+                <TableCell>{row.status}</TableCell>
+                <TableCell>{row.situacao_do_job}</TableCell>
+                <TableCell>{row.prazo}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
       <Box sx={{ display: "flex", justifyContent: "end", mt: 4, gap: 2 }}>
         <Button onClick={handleBack}>Voltar</Button>
         <Button variant="contained" onClick={handleNext}>
