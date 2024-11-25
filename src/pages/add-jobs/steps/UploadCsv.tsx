@@ -31,17 +31,18 @@ export const UploadCsv: React.FC<IStepsProps> = ({
   handleNext,
 }) => {
   const [csvData, setCsvData] = useState<ICsvData[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onDrop = async (acceptedFiles: File[]) => {
+    setIsLoading(true);
     const file = acceptedFiles[0];
-
     try {
       const data = await parseCsv<ICsvData>(file);
-      console.log(data);
       setCsvData(data);
     } catch (error) {
       console.error("Erro ao processar o arquivo: ", error);
     }
+    setIsLoading(false);
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -143,7 +144,7 @@ export const UploadCsv: React.FC<IStepsProps> = ({
       </TableContainer>
       <Box sx={{ display: "flex", justifyContent: "end", mt: 4, gap: 2 }}>
         <Button onClick={handleBack}>Voltar</Button>
-        <Button variant="contained" onClick={handleNext}>
+        <Button variant="contained" onClick={handleNext} disabled={isLoading}>
           Enviar
         </Button>
       </Box>
