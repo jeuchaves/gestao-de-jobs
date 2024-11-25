@@ -29,6 +29,7 @@ interface ICsvData {
 export const UploadCsv: React.FC<IStepsProps> = ({
   handleBack,
   handleNext,
+  saveData,
 }) => {
   const [csvData, setCsvData] = useState<ICsvData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,6 +53,23 @@ export const UploadCsv: React.FC<IStepsProps> = ({
       "application/xml": [".xml"],
     },
   });
+
+  const handleNextStep = () => {
+    if (saveData) {
+      saveData(
+        csvData.map((row) => ({
+          nDoc: row.n__doc.toString(),
+          typeDoc: row.tipo_doc,
+          title: row.titulo,
+          project: row.projeto,
+          status: row.status,
+          jobSituation: row.situacao_do_job,
+          deadline: row.prazo,
+        })),
+      );
+    }
+    handleNext();
+  };
 
   return (
     <Container sx={{ py: 4 }}>
@@ -144,7 +162,11 @@ export const UploadCsv: React.FC<IStepsProps> = ({
       </TableContainer>
       <Box sx={{ display: "flex", justifyContent: "end", mt: 4, gap: 2 }}>
         <Button onClick={handleBack}>Voltar</Button>
-        <Button variant="contained" onClick={handleNext} disabled={isLoading}>
+        <Button
+          variant="contained"
+          onClick={handleNextStep}
+          disabled={isLoading}
+        >
           Enviar
         </Button>
       </Box>
