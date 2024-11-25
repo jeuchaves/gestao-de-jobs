@@ -4,6 +4,7 @@ import {
   Container,
   Paper,
   Table,
+  TableBody,
   TableCell,
   TableContainer,
   TableHead,
@@ -51,6 +52,17 @@ export const UploadCsv: React.FC<IStepsProps> = ({
               <TableCell>Prazo</TableCell>
             </TableRow>
           </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>3278.31</TableCell>
+              <TableCell>Tarefa</TableCell>
+              <TableCell>Campanha Social Novembro - FME</TableCell>
+              <TableCell>FME ( Social) CAMPANHA NOVEMBRO</TableCell>
+              <TableCell>Criação</TableCell>
+              <TableCell>Aberta</TableCell>
+              <TableCell>22/11/2024</TableCell>
+            </TableRow>
+          </TableBody>
         </Table>
       </TableContainer>
       <Box mt={4}>
