@@ -26,11 +26,9 @@ interface ICsvData {
   prazo: string;
 }
 
-export const UploadCsv: React.FC<IStepsProps> = ({
-  handleBack,
-  handleNext,
-  saveData,
-}) => {
+export const UploadCsv: React.FC<
+  Pick<IStepsProps, "handleNext" | "saveData">
+> = ({ handleNext, saveData }) => {
   const [csvData, setCsvData] = useState<ICsvData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -68,7 +66,9 @@ export const UploadCsv: React.FC<IStepsProps> = ({
         })),
       );
     }
-    handleNext();
+    if (handleNext) {
+      handleNext();
+    }
   };
 
   return (
@@ -132,42 +132,20 @@ export const UploadCsv: React.FC<IStepsProps> = ({
           )}
         </Box>
       </Box>
-      <TableContainer component={Paper} sx={{ mt: 4 }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Nº Doc</TableCell>
-              <TableCell>Tipo Doc</TableCell>
-              <TableCell>Título</TableCell>
-              <TableCell>Projeto</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Situação do Job</TableCell>
-              <TableCell>Prazo</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {csvData.map((row, index) => (
-              <TableRow key={index}>
-                <TableCell>{row.n__doc}</TableCell>
-                <TableCell>{row.tipo_doc}</TableCell>
-                <TableCell>{row.titulo}</TableCell>
-                <TableCell>{row.projeto}</TableCell>
-                <TableCell>{row.status}</TableCell>
-                <TableCell>{row.situacao_do_job}</TableCell>
-                <TableCell>{row.prazo}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {csvData.length > 0 && (
+        <Box mt={4}>
+          <Typography variant="h6">
+            Quantidade de jobs para adicionar: {csvData.length}
+          </Typography>
+        </Box>
+      )}
       <Box sx={{ display: "flex", justifyContent: "end", mt: 4, gap: 2 }}>
-        <Button onClick={handleBack}>Voltar</Button>
         <Button
           variant="contained"
           onClick={handleNextStep}
           disabled={isLoading}
         >
-          Enviar
+          Continuar
         </Button>
       </Box>
     </Container>

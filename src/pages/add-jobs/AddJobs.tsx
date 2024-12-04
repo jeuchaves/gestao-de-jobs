@@ -5,8 +5,8 @@ import { SelectResponsible } from "./steps/SelectResponsible";
 export interface IStepsProps {
   handleNext: () => void;
   handleBack: () => void;
-  saveData?: (data: Partial<IJobData>[]) => void;
-  getData?: () => Partial<IJobData>[];
+  saveData: (data: Partial<IJobData>[]) => void;
+  getData: () => Partial<IJobData>[];
 }
 
 interface IJobData {
@@ -17,7 +17,7 @@ interface IJobData {
   status: string;
   jobSituation: string;
   deadline: string;
-  responsible: string;
+  responsibleId: number;
 }
 
 export const AddJobs = () => {
@@ -36,18 +36,16 @@ export const AddJobs = () => {
     setStep((prev) => prev - 1);
   };
 
+  const onFinish = () => {
+    console.log(jobData);
+  };
+
   return (
     <>
-      {step === 1 && (
-        <UploadCsv
-          handleNext={onNext}
-          handleBack={onBack}
-          saveData={saveData}
-        />
-      )}
+      {step === 1 && <UploadCsv handleNext={onNext} saveData={saveData} />}
       {step === 2 && (
         <SelectResponsible
-          handleNext={onNext}
+          handleNext={onFinish}
           handleBack={onBack}
           saveData={saveData}
           getData={() => jobData}
