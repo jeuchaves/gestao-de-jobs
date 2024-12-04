@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { IStepsProps } from "../AddJobs";
 import { useDropzone } from "react-dropzone";
-import { parseCsv } from "../../../services/parsers/parseCsv";
+import { parseCsv } from "../../../../services/parsers/parseCsv";
 import { useState } from "react";
 
 interface ICsvData {

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { UploadCsv } from "./steps/UploadCsv";
 import { SelectResponsible } from "./steps/SelectResponsible";
-import { IJob } from "../../types/jobs";
-import { JobsServices } from "../../services/api/jobs/JobsServices";
+import { IJob } from "../../../types/jobs";
+import { JobsServices } from "../../../services/api/jobs/JobsServices";
 import { useNavigate } from "react-router-dom";
 
 export interface IStepsProps {

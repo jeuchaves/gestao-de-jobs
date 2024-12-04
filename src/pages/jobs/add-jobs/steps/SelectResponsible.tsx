@@ -15,8 +15,8 @@ import {
 } from "@mui/material";
 import { IStepsProps } from "../AddJobs";
 import { useEffect, useMemo, useState } from "react";
-import { UserServices } from "../../../services/api/users/UserServices";
-import { IUser } from "../../../types/users";
+import { UserServices } from "../../../../services/api/users/UserServices";
+import { IUser } from "../../../../types/users";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 interface IFormValues {
