@@ -14,13 +14,9 @@ import {
   Typography,
 } from "@mui/material";
 import { IStepsProps } from "../AddJobs";
-
-const responsibleOptions = [
-  { label: "Pitter", value: "pitter" },
-  { label: "Ton", value: "ton" },
-  { label: "Sky", value: "sky" },
-  { label: "Haian", value: "haian" },
-];
+import { useEffect, useState } from "react";
+import { UserServices } from "../../../services/api/users/UserServices";
+import { IUser } from "../../../types/users";
 
 export const SelectResponsible: React.FC<IStepsProps> = ({
   handleBack,
@@ -28,6 +24,19 @@ export const SelectResponsible: React.FC<IStepsProps> = ({
   saveData,
   getData,
 }) => {
+  const [users, setUsers] = useState<IUser[]>([]);
+
+  useEffect(() => {
+    UserServices.getAll({}).then((response) => {
+      if (response instanceof Error) {
+        console.error(response);
+        return;
+      }
+      console.log(response);
+      setUsers(response);
+    });
+  }, []);
+
   if (!getData) {
     window.alert("Erro ao obter os dados");
     handleBack();
@@ -70,9 +79,19 @@ export const SelectResponsible: React.FC<IStepsProps> = ({
                 <TableCell>{row.project}</TableCell>
                 <TableCell>
                   <Autocomplete
-                    options={responsibleOptions}
+                    options={users || []}
+                    getOptionLabel={(option) => option.nomeCompleto}
+                    renderOption={(props, option) => (
+                      <li {...props} key={option.id}>
+                        {option.nomeCompleto}
+                      </li>
+                    )}
                     renderInput={(params) => (
-                      <TextField {...params} label="Responsável" />
+                      <TextField
+                        {...params}
+                        label="Responsável"
+                        sx={{ width: 200 }}
+                      />
                     )}
                   />
                 </TableCell>
