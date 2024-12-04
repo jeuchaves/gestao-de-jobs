@@ -62,7 +62,7 @@ export const SelectResponsible: React.FC<IStepsProps> = ({
     saveData(
       data.map((item, index) => ({
         ...item,
-        responsible: formData.responsibleId[index],
+        responsibleId: formData.responsibleId[index],
       })),
     );
 

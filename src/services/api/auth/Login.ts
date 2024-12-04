@@ -1,17 +1,33 @@
+import { IUser } from "../../../types/users";
 import { Api } from "../axios-config";
 
-export const login = async (email: string, senha: string) => {
+interface ILoginResponse {
+  accessToken: string;
+  usuario: IUser;
+}
+
+const login = async (
+  email: string,
+  senha: string,
+): Promise<ILoginResponse | Error> => {
   try {
-    const response = await Api.post("/auth/login", {
+    const { data } = await Api.post<ILoginResponse>("/auth/login", {
       email,
       senha,
     });
-    const { accessToken, usuario } = response.data;
-    localStorage.setItem("authToken", accessToken);
-    localStorage.setItem("usuario", JSON.stringify(usuario));
-    return { accessToken, usuario };
+    if (data.accessToken || data.usuario) {
+      const { accessToken, usuario } = data;
+      localStorage.setItem("authToken", accessToken);
+      localStorage.setItem("usuario", JSON.stringify(usuario));
+      return { accessToken, usuario };
+    }
+    return new Error("Erro ao fazer login");
   } catch (error) {
     console.error("Login falhou: ", error);
     throw error;
   }
+};
+
+export const authServices = {
+  login,
 };

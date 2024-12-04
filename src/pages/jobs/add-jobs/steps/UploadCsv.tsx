@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -11,10 +12,11 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { IStepsProps } from "../AddJobs";
 import { useDropzone } from "react-dropzone";
+import { parse, format } from "date-fns";
+
+import { IStepsProps } from "../AddJobs";
 import { parseCsv } from "../../../../services/parsers/parseCsv";
-import { useState } from "react";
 
 interface ICsvData {
   n__doc: number;
@@ -52,23 +54,24 @@ export const UploadCsv: React.FC<
     },
   });
 
+  const convertDate = (dateString: string): string => {
+    const parsedDate = parse(dateString, "dd/MM/yyyy", new Date());
+    return format(parsedDate, "yyyy-MM-dd");
+  };
+
   const handleNextStep = () => {
-    if (saveData) {
-      saveData(
-        csvData.map((row) => ({
-          nDoc: row.n__doc.toString(),
-          typeDoc: row.tipo_doc,
-          title: row.titulo,
-          project: row.projeto,
-          status: row.status,
-          jobSituation: row.situacao_do_job,
-          deadline: row.prazo,
-        })),
-      );
-    }
-    if (handleNext) {
-      handleNext();
-    }
+    saveData(
+      csvData.map((row) => ({
+        nDoc: row.n__doc.toString(),
+        typeDoc: row.tipo_doc,
+        title: row.titulo,
+        project: row.projeto,
+        status: row.status,
+        jobSituation: row.situacao_do_job,
+        deadline: convertDate(row.prazo),
+      })),
+    );
+    handleNext();
   };
 
   return (

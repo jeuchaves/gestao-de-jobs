@@ -18,13 +18,20 @@ export const AddJobs = () => {
   const [jobData, setJobData] = useState<Partial<IJob>[]>([]);
 
   const saveData = (data: Partial<IJob>[]) => {
-    setJobData((prev) => [...prev, ...data]);
+    setJobData((prev) => {
+      const updatedData = [...prev];
+      data.forEach((item, index) => {
+        updatedData[index] = { ...updatedData[index], ...item };
+      });
+      return updatedData;
+    });
   };
 
   const onNext = () => setStep((prev) => prev + 1);
   const onBack = () => setStep((prev) => prev - 1);
 
   const onFinish = () => {
+    console.log(jobData);
     JobsServices.createMany(jobData as IJob[]).then((response) => {
       if (response instanceof Error) {
         console.error(response);

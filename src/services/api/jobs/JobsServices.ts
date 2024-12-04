@@ -3,7 +3,7 @@ import { Api } from "../axios-config";
 
 const createMany = async (body: IJob[]): Promise<number[] | Error> => {
   try {
-    const { data } = await Api.post<number[]>("/jobs/many", body);
+    const { data } = await Api.post<number[]>("/jobs/many", { jobs: body });
     if (data && Array.isArray(data)) {
       return data;
     }
