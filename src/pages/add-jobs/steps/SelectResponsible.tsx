@@ -24,7 +24,7 @@ export const SelectResponsible: React.FC<IStepsProps> = ({
   saveData,
   getData,
 }) => {
-  const [users, setUsers] = useState<IUser[]>([]);
+  const [usersOptions, setUsersOptions] = useState<IUser[]>([]);
 
   useEffect(() => {
     UserServices.getAll({}).then((response) => {
@@ -33,7 +33,7 @@ export const SelectResponsible: React.FC<IStepsProps> = ({
         return;
       }
       console.log(response);
-      setUsers(response);
+      setUsersOptions(response);
     });
   }, []);
 
@@ -79,7 +79,7 @@ export const SelectResponsible: React.FC<IStepsProps> = ({
                 <TableCell>{row.project}</TableCell>
                 <TableCell>
                   <Autocomplete
-                    options={users || []}
+                    options={usersOptions || []}
                     getOptionLabel={(option) => option.nomeCompleto}
                     renderOption={(props, option) => (
                       <li {...props} key={option.id}>
