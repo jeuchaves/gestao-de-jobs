@@ -17,10 +17,12 @@ import {
 import React from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
+import { JobsServices } from "../../../../services/api/jobs/JobsServices";
 
 interface IDialogFinishJobProps {
   open: boolean;
   onClose: () => void;
+  jobId: number | null;
 }
 
 interface IFormValues {
@@ -46,6 +48,7 @@ const dialogSchema: yup.ObjectSchema<IFormValues> = yup.object({
 export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
   open,
   onClose,
+  jobId,
 }) => {
   const complexityOptions = [
     { value: "simple", label: "Simples" },
@@ -70,7 +73,17 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
   });
 
   const onSubmit: SubmitHandler<IFormValues> = (data) => {
-    console.log(data);
+    if (!jobId) {
+      console.error("Job ID not found");
+      return;
+    }
+    JobsServices.finishJob(jobId, data).then((response) => {
+      if (response instanceof Error) {
+        console.error(response);
+        return;
+      }
+      onClose();
+    });
   };
 
   return (

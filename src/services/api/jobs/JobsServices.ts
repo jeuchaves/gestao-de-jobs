@@ -43,7 +43,22 @@ const getAll = async ({
   }
 };
 
+const finishJob = async (
+  id: number,
+  data: Partial<IJob>,
+): Promise<void | Error> => {
+  try {
+    await Api.patch(`/jobs/${id}`, data);
+  } catch (error) {
+    console.error("UserServices.getAll", error);
+    return new Error(
+      (error as { message: string }).message || "Erro ao buscar usuários",
+    );
+  }
+};
+
 export const JobsServices = {
   createMany,
   getAll,
+  finishJob,
 };

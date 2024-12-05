@@ -22,6 +22,9 @@ import { DialogFinishJob } from "./components/DialogFinishJob";
 export const PageJobs = () => {
   const [jobs, setJobs] = useState<IJob[]>([]);
 
+  const [selectedJob, setSelectedJob] = useState<number | null>(null);
+  const [openDialog, setOpenDialog] = useState(false);
+
   useEffect(() => {
     JobsServices.getAll({}).then((response) => {
       if (response instanceof Error) {
@@ -32,9 +35,18 @@ export const PageJobs = () => {
     });
   }, []);
 
+  const handleOpenDialog = (id: number) => {
+    setSelectedJob(id);
+    setOpenDialog(true);
+  };
+
   return (
     <Container sx={{ py: 4 }}>
-      <DialogFinishJob open={true} onClose={() => {}} />
+      <DialogFinishJob
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        jobId={selectedJob}
+      />
       <Typography variant="h3" gutterBottom>
         Jobs
       </Typography>
@@ -63,7 +75,7 @@ export const PageJobs = () => {
                   </TableCell>
                   <TableCell>{job.responsibleName}</TableCell>
                   <TableCell>
-                    <IconButton>
+                    <IconButton onClick={() => handleOpenDialog(job.id)}>
                       <BookmarkAddRounded color="primary" />
                     </IconButton>
                   </TableCell>

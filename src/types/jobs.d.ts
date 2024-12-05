@@ -19,7 +19,7 @@ export interface IJob {
   deadline: string;
   responsibleId: number;
   estimatedComplexity: string | null;
-  isChangeRequest: number;
+  isChangeRequest: boolean;
   timeSheet: number;
   actualComplexity: number | string;
   contingencies: number | string;
