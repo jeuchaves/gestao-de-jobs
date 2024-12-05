@@ -19,7 +19,7 @@ import { UserServices } from "../../../../services/api/users/UserServices";
 import { IUser } from "../../../../types/users";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { JobsServices } from "../../../../services/api/jobs/JobsServices";
-import { IJob } from "../../../../types/jobs";
+import { IJobCreate } from "../../../../types/jobs";
 
 interface IFormValues {
   responsibleId: number[];
@@ -63,7 +63,7 @@ export const SelectResponsible: React.FC<Omit<IStepsProps, "saveData">> = ({
     const jobData = data.map((item, index) => ({
       ...item,
       responsibleId: formData.responsibleId[index],
-    })) as IJob[];
+    })) as IJobCreate[];
 
     JobsServices.createMany(jobData).then((response) => {
       if (response instanceof Error) {

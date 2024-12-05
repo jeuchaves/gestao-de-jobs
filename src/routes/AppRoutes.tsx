@@ -1,5 +1,11 @@
 import { Outlet, Route, Routes } from "react-router-dom";
-import { AddJobs, Dashboard, PageLogin, PageNotFound } from "../pages";
+import {
+  AddJobs,
+  Dashboard,
+  PageJobs,
+  PageLogin,
+  PageNotFound,
+} from "../pages";
 
 export const AppRoutes = () => {
   return (
@@ -11,6 +17,7 @@ export const AppRoutes = () => {
       </Route>
 
       <Route path="/jobs" element={<Outlet />}>
+        <Route index element={<PageJobs />} />
         <Route path="adicionar" element={<AddJobs />} />
       </Route>
 

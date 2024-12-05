@@ -1,22 +1,22 @@
 import { useState } from "react";
 import { UploadCsv } from "./steps/UploadCsv";
 import { SelectResponsible } from "./steps/SelectResponsible";
-import { IJob } from "../../../types/jobs";
+import { IJobCreate } from "../../../types/jobs";
 import { useNavigate } from "react-router-dom";
 
 export interface IStepsProps {
   handleNext: () => void;
   handleBack: () => void;
-  saveData: (data: Partial<IJob>[]) => void;
-  getData: () => Partial<IJob>[];
+  saveData: (data: Partial<IJobCreate>[]) => void;
+  getData: () => Partial<IJobCreate>[];
 }
 
 export const AddJobs = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const [jobData, setJobData] = useState<Partial<IJob>[]>([]);
+  const [jobData, setJobData] = useState<Partial<IJobCreate>[]>([]);
 
-  const saveData = (data: Partial<IJob>[]) => {
+  const saveData = (data: Partial<IJobCreate>[]) => {
     setJobData((prev) => {
       const updatedData = [...prev];
       data.forEach((item, index) => {
