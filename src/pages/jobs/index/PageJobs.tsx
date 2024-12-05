@@ -1,10 +1,11 @@
 // PageJobs.tsx
 
 import { useEffect, useState } from "react";
-import { JobsServices } from "../../services/api/jobs/JobsServices";
-import { IJob } from "../../types/jobs";
+import { JobsServices } from "../../../services/api/jobs/JobsServices";
+import { IJob } from "../../../types/jobs";
 import {
   Container,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -14,7 +15,9 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { timeSinceDate } from "../../utils/dateUtils";
+import { timeSinceDate } from "../../../utils/dateUtils";
+import { BookmarkAddRounded } from "@mui/icons-material";
+import { DialogFinishJob } from "./components/DialogFinishJob";
 
 export const PageJobs = () => {
   const [jobs, setJobs] = useState<IJob[]>([]);
@@ -31,6 +34,7 @@ export const PageJobs = () => {
 
   return (
     <Container sx={{ py: 4 }}>
+      <DialogFinishJob open={true} onClose={() => {}} onSubmit={() => {}} />
       <Typography variant="h3" gutterBottom>
         Jobs
       </Typography>
@@ -42,6 +46,7 @@ export const PageJobs = () => {
               <TableCell>Nome</TableCell>
               <TableCell>Prazo</TableCell>
               <TableCell>Responsável</TableCell>
+              <TableCell>Concluir</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -57,6 +62,11 @@ export const PageJobs = () => {
                     {prazo.text}
                   </TableCell>
                   <TableCell>{job.responsibleName}</TableCell>
+                  <TableCell>
+                    <IconButton>
+                      <BookmarkAddRounded color="primary" />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               );
             })}
