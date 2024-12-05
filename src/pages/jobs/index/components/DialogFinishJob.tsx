@@ -15,19 +15,18 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 interface IDialogFinishJobProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: IFormValues) => void;
 }
 
 interface IFormValues {
   estimatedComplexity: string;
   actualComplexity: string;
-  contingencies: string;
+  contingencies?: string;
   timeSheet: number;
   isChangeRequest: boolean;
 }
@@ -35,10 +34,7 @@ interface IFormValues {
 const dialogSchema: yup.ObjectSchema<IFormValues> = yup.object({
   estimatedComplexity: yup.string().required("Campo obrigatório"),
   actualComplexity: yup.string().required("Campo obrigatório"),
-  contingencies: yup
-    .string()
-    .max(500, "Máximo de 500 caracteres")
-    .required("Campo obrigatório"),
+  contingencies: yup.string().max(500, "Máximo de 500 caracteres"),
   timeSheet: yup
     .number()
     .typeError("Deve ser um número")
@@ -50,8 +46,13 @@ const dialogSchema: yup.ObjectSchema<IFormValues> = yup.object({
 export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
   open,
   onClose,
-  onSubmit,
 }) => {
+  const complexityOptions = [
+    { value: "simple", label: "Simples" },
+    { value: "regular", label: "Regular" },
+    { value: "complex", label: "Complexo" },
+  ];
+
   const {
     handleSubmit,
     control,
@@ -67,6 +68,10 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
       isChangeRequest: false,
     },
   });
+
+  const onSubmit: SubmitHandler<IFormValues> = (data) => {
+    console.log(data);
+  };
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -90,9 +95,9 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
                   onChange={(_, value) => field.onChange(value)}
                   value={field.value}
                 >
-                  {["simple", "regular", "complex"].map((option) => (
-                    <ToggleButton key={option} value={option}>
-                      {option}
+                  {complexityOptions.map((option) => (
+                    <ToggleButton key={option.value} value={option.value}>
+                      {option.label}
                     </ToggleButton>
                   ))}
                 </ToggleButtonGroup>
@@ -100,7 +105,9 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
             />
             {errors.estimatedComplexity && (
               <Box color="error.main" mt={1}>
-                {errors.estimatedComplexity.message}
+                <Typography variant="caption">
+                  {errors.estimatedComplexity.message}
+                </Typography>
               </Box>
             )}
           </Box>
@@ -118,9 +125,9 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
                   onChange={(_, value) => field.onChange(value)}
                   value={field.value}
                 >
-                  {["simple", "regular", "complex"].map((option) => (
-                    <ToggleButton key={option} value={option}>
-                      {option}
+                  {complexityOptions.map((option) => (
+                    <ToggleButton key={option.value} value={option.value}>
+                      {option.label}
                     </ToggleButton>
                   ))}
                 </ToggleButtonGroup>
@@ -128,7 +135,9 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
             />
             {errors.actualComplexity && (
               <Box color="error.main" mt={1}>
-                {errors.actualComplexity.message}
+                <Typography variant="caption">
+                  {errors.actualComplexity.message}
+                </Typography>
               </Box>
             )}
           </Box>

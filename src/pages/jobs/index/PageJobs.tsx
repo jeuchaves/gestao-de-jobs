@@ -34,7 +34,7 @@ export const PageJobs = () => {
 
   return (
     <Container sx={{ py: 4 }}>
-      <DialogFinishJob open={true} onClose={() => {}} onSubmit={() => {}} />
+      <DialogFinishJob open={true} onClose={() => {}} />
       <Typography variant="h3" gutterBottom>
         Jobs
       </Typography>
