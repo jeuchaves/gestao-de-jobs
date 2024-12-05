@@ -18,15 +18,16 @@ import { useEffect, useMemo, useState } from "react";
 import { UserServices } from "../../../../services/api/users/UserServices";
 import { IUser } from "../../../../types/users";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { JobsServices } from "../../../../services/api/jobs/JobsServices";
+import { IJob } from "../../../../types/jobs";
 
 interface IFormValues {
   responsibleId: number[];
 }
 
-export const SelectResponsible: React.FC<IStepsProps> = ({
+export const SelectResponsible: React.FC<Omit<IStepsProps, "saveData">> = ({
   handleBack,
   handleNext,
-  saveData,
   getData,
 }) => {
   const [usersOptions, setUsersOptions] = useState<IUser[]>([]);
@@ -59,14 +60,18 @@ export const SelectResponsible: React.FC<IStepsProps> = ({
       return;
     }
 
-    saveData(
-      data.map((item, index) => ({
-        ...item,
-        responsibleId: formData.responsibleId[index],
-      })),
-    );
+    const jobData = data.map((item, index) => ({
+      ...item,
+      responsibleId: formData.responsibleId[index],
+    })) as IJob[];
 
-    handleNext();
+    JobsServices.createMany(jobData).then((response) => {
+      if (response instanceof Error) {
+        console.error(response);
+        return;
+      }
+      handleNext();
+    });
   };
 
   const renderTableRows = useMemo(

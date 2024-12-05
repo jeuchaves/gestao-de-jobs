@@ -2,7 +2,6 @@ import { useState } from "react";
 import { UploadCsv } from "./steps/UploadCsv";
 import { SelectResponsible } from "./steps/SelectResponsible";
 import { IJob } from "../../../types/jobs";
-import { JobsServices } from "../../../services/api/jobs/JobsServices";
 import { useNavigate } from "react-router-dom";
 
 export interface IStepsProps {
@@ -31,15 +30,8 @@ export const AddJobs = () => {
   const onBack = () => setStep((prev) => prev - 1);
 
   const onFinish = () => {
-    console.log(jobData);
-    JobsServices.createMany(jobData as IJob[]).then((response) => {
-      if (response instanceof Error) {
-        console.error(response);
-        return;
-      }
-      window.alert("Jobs criados com sucesso");
-      navigate("/");
-    });
+    window.alert("Jobs criados com sucesso");
+    navigate("/");
   };
 
   return (
@@ -49,7 +41,6 @@ export const AddJobs = () => {
         <SelectResponsible
           handleNext={onFinish}
           handleBack={onBack}
-          saveData={saveData}
           getData={() => jobData}
         />
       )}
