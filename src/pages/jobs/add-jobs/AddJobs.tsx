@@ -3,6 +3,7 @@ import { UploadCsv } from "./steps/UploadCsv";
 import { SelectResponsible } from "./steps/SelectResponsible";
 import { IJobCreate } from "../../../types/jobs";
 import { useNavigate } from "react-router-dom";
+import { BaseLayout } from "../../../layouts/BaseLayout";
 
 export interface IStepsProps {
   handleNext: () => void;
@@ -35,7 +36,7 @@ export const AddJobs = () => {
   };
 
   return (
-    <>
+    <BaseLayout>
       {step === 1 && <UploadCsv handleNext={onNext} saveData={saveData} />}
       {step === 2 && (
         <SelectResponsible
@@ -44,6 +45,6 @@ export const AddJobs = () => {
           getData={() => jobData}
         />
       )}
-    </>
+    </BaseLayout>
   );
 };

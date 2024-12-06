@@ -2,7 +2,6 @@ import {
   Autocomplete,
   Box,
   Button,
-  Container,
   Paper,
   Table,
   TableBody,
@@ -122,7 +121,7 @@ export const SelectResponsible: React.FC<Omit<IStepsProps, "saveData">> = ({
   );
 
   return (
-    <Container sx={{ py: 4 }}>
+    <>
       <Typography variant="h3" gutterBottom>
         Selecionar responsáveis
       </Typography>
@@ -147,6 +146,6 @@ export const SelectResponsible: React.FC<Omit<IStepsProps, "saveData">> = ({
           </Button>
         </Box>
       </Box>
-    </Container>
+    </>
   );
 };

@@ -7,7 +7,6 @@ import {
   Box,
   Button,
   Chip,
-  Container,
   IconButton,
   Paper,
   Table,
@@ -21,6 +20,7 @@ import {
 import { timeSinceDate } from "../../../utils/dateUtils";
 import { BookmarkAddRounded, PersonRounded } from "@mui/icons-material";
 import { DialogFinishJob } from "./components/DialogFinishJob";
+import { BaseLayout } from "../../../layouts/BaseLayout";
 
 export const PageJobs = () => {
   const [jobs, setJobs] = useState<IJob[]>([]);
@@ -46,7 +46,7 @@ export const PageJobs = () => {
   };
 
   return (
-    <Container sx={{ py: 4 }}>
+    <BaseLayout>
       <DialogFinishJob
         open={openDialog}
         onClose={() => setOpenDialog(false)}
@@ -118,6 +118,6 @@ export const PageJobs = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </Container>
+    </BaseLayout>
   );
 };

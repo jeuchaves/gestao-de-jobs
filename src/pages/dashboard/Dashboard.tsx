@@ -1,7 +1,10 @@
+import { Typography } from "@mui/material";
+import { BaseLayout } from "../../layouts/BaseLayout";
+
 export const Dashboard = () => {
   return (
-    <div>
-      <h1>Dashboard</h1>
-    </div>
+    <BaseLayout>
+      <Typography variant="h3">Dashboard</Typography>
+    </BaseLayout>
   );
-}
+};

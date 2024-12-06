@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   Box,
   Button,
-  Container,
   Paper,
   Table,
   TableBody,
@@ -75,7 +74,7 @@ export const UploadCsv: React.FC<
   };
 
   return (
-    <Container sx={{ py: 4 }}>
+    <>
       <Typography variant="h3" gutterBottom>
         Fazer upload do CSV
       </Typography>
@@ -151,6 +150,6 @@ export const UploadCsv: React.FC<
           Continuar
         </Button>
       </Box>
-    </Container>
+    </>
   );
 };
