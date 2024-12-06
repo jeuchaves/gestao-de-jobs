@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { JobsServices } from "../../../services/api/jobs/JobsServices";
 import { IJob } from "../../../types/jobs";
 import {
+  Box,
+  Button,
+  Chip,
   Container,
   IconButton,
   Paper,
@@ -16,24 +19,26 @@ import {
   Typography,
 } from "@mui/material";
 import { timeSinceDate } from "../../../utils/dateUtils";
-import { BookmarkAddRounded } from "@mui/icons-material";
+import { BookmarkAddRounded, PersonRounded } from "@mui/icons-material";
 import { DialogFinishJob } from "./components/DialogFinishJob";
 
 export const PageJobs = () => {
   const [jobs, setJobs] = useState<IJob[]>([]);
+  const [filter, setFilter] = useState<"all" | "completed">("all");
 
   const [selectedJob, setSelectedJob] = useState<number | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
-    JobsServices.getAll({}).then((response) => {
+    const props = filter === "all" ? {} : { completed: true };
+    JobsServices.getAll(props).then((response) => {
       if (response instanceof Error) {
         console.error(response.message);
         return;
       }
       setJobs(response);
     });
-  }, []);
+  }, [filter]);
 
   const handleOpenDialog = (id: number) => {
     setSelectedJob(id);
@@ -47,9 +52,32 @@ export const PageJobs = () => {
         onClose={() => setOpenDialog(false)}
         jobId={selectedJob}
       />
-      <Typography variant="h3" gutterBottom>
-        Jobs
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: 2,
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h3" gutterBottom>
+          Jobs
+        </Typography>
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Button
+            variant={filter === "all" ? "contained" : "outlined"}
+            onClick={() => setFilter("all")}
+          >
+            Todos
+          </Button>
+          <Button
+            variant={filter === "completed" ? "contained" : "outlined"}
+            onClick={() => setFilter("completed")}
+          >
+            Concluídos
+          </Button>
+        </Box>
+      </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -73,7 +101,12 @@ export const PageJobs = () => {
                   >
                     {prazo.text}
                   </TableCell>
-                  <TableCell>{job.responsibleName}</TableCell>
+                  <TableCell>
+                    <Chip
+                      icon={<PersonRounded />}
+                      label={job.responsibleName}
+                    />
+                  </TableCell>
                   <TableCell>
                     <IconButton onClick={() => handleOpenDialog(job.id)}>
                       <BookmarkAddRounded color="primary" />

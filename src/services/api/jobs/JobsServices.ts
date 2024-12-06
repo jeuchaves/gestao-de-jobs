@@ -5,6 +5,7 @@ export interface IFilterJobs {
   page?: number;
   limit?: number;
   filter?: string;
+  completed?: boolean;
 }
 
 const createMany = async (body: IJobCreate[]): Promise<number[] | Error> => {
@@ -26,10 +27,11 @@ const getAll = async ({
   page,
   limit,
   filter,
+  completed,
 }: IFilterJobs): Promise<IJob[] | Error> => {
   try {
     const { data } = await Api.get(
-      `/jobs?page=${page ?? 1}&limit=${limit ?? 20}&filter=${filter ?? ""}`,
+      `/jobs?page=${page ?? 1}&limit=${limit ?? 20}&filter=${filter ?? ""}&${completed ? "completed=true" : ""}`,
     );
     if (data && Array.isArray(data)) {
       return data;
