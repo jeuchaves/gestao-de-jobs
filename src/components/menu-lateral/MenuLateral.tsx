@@ -1,10 +1,12 @@
 import {
   AddCircleRounded,
   DashboardRounded,
+  LogoutRounded,
   WorkRounded,
 } from "@mui/icons-material";
 import {
   Box,
+  Divider,
   Drawer,
   List,
   ListItem,
@@ -13,6 +15,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
+import { authServices } from "../../services/api/auth";
 
 const menuItems = [
   { label: "Dashboard", path: "/dashboard", icon: <DashboardRounded /> },
@@ -40,6 +43,9 @@ export const MenuLateral = () => {
         "& .MuiDrawer-paper": {
           width: drawerWidth,
           boxSizing: "border-box",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
         },
       }}
     >
@@ -59,6 +65,19 @@ export const MenuLateral = () => {
               </ListItem>
             </Link>
           ))}
+        </List>
+      </Box>
+      <Box>
+        <Divider />
+        <List>
+          <ListItem disablePadding>
+            <ListItemButton onClick={authServices.logout}>
+              <ListItemIcon>
+                <LogoutRounded />
+              </ListItemIcon>
+              <ListItemText primary="Sair" />
+            </ListItemButton>
+          </ListItem>
         </List>
       </Box>
     </Drawer>

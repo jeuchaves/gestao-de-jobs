@@ -9,7 +9,7 @@ interface ILoginResponse {
 export const AUTH_TOKEN = "authToken";
 export const AUTH_USER = "usuario";
 
-const login = async (
+export const login = async (
   email: string,
   senha: string,
 ): Promise<ILoginResponse | Error> => {
@@ -29,8 +29,4 @@ const login = async (
     console.error("Login falhou: ", error);
     throw error;
   }
-};
-
-export const authServices = {
-  login,
 };

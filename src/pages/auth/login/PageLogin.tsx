@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
-import { authServices } from "../../../services/api/auth/Login";
 import { useNavigate } from "react-router-dom";
+import { authServices } from "../../../services/api/auth";
 
 type TLoginFormData = {
   email: string;
