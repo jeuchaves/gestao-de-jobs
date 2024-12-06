@@ -21,6 +21,7 @@ import { timeSinceDate } from "../../../utils/dateUtils";
 import { BookmarkAddRounded, PersonRounded } from "@mui/icons-material";
 import { DialogFinishJob } from "./components/DialogFinishJob";
 import { BaseLayout } from "../../../layouts/BaseLayout";
+import { DialogAddJobs } from "../../../components/dialog-add-jobs/DialogAddJobs";
 
 export const PageJobs = () => {
   const [jobs, setJobs] = useState<IJob[]>([]);
@@ -28,6 +29,7 @@ export const PageJobs = () => {
 
   const [selectedJob, setSelectedJob] = useState<number | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openDialogAddJob, setOpenDialogAddJob] = useState(false);
 
   useEffect(() => {
     const props = filter === "all" ? {} : { completed: true };
@@ -52,6 +54,10 @@ export const PageJobs = () => {
         onClose={() => setOpenDialog(false)}
         jobId={selectedJob}
       />
+      <DialogAddJobs
+        open={openDialogAddJob}
+        onClose={() => setOpenDialogAddJob(false)}
+      />
       <Box
         sx={{
           display: "flex",
@@ -64,6 +70,9 @@ export const PageJobs = () => {
           Jobs
         </Typography>
         <Box sx={{ display: "flex", gap: 2 }}>
+          <Button onClick={() => setOpenDialogAddJob(true)}>
+            Adicionar novo job
+          </Button>
           <Button
             variant={filter === "all" ? "contained" : "outlined"}
             onClick={() => setFilter("all")}
