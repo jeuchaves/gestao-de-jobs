@@ -6,6 +6,9 @@ interface ILoginResponse {
   usuario: IUser;
 }
 
+export const AUTH_TOKEN = "authToken";
+export const AUTH_USER = "usuario";
+
 const login = async (
   email: string,
   senha: string,
@@ -17,8 +20,8 @@ const login = async (
     });
     if (data.accessToken || data.usuario) {
       const { accessToken, usuario } = data;
-      localStorage.setItem("authToken", accessToken);
-      localStorage.setItem("usuario", JSON.stringify(usuario));
+      localStorage.setItem(AUTH_TOKEN, accessToken);
+      localStorage.setItem(AUTH_USER, JSON.stringify(usuario));
       return { accessToken, usuario };
     }
     return new Error("Erro ao fazer login");
