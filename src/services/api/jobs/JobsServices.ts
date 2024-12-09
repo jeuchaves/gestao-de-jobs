@@ -8,6 +8,21 @@ export interface IFilterJobs {
   completed?: boolean;
 }
 
+const create = async (body: IJobCreate): Promise<number | Error> => {
+  try {
+    const { data } = await Api.post<number>("/jobs", body);
+    if (data && typeof data === "number") {
+      return data;
+    }
+    return new Error("Erro ao criar o job");
+  } catch (error) {
+    console.error("UserServices.getAll", error);
+    return new Error(
+      (error as { message: string }).message || "Erro ao buscar usuários",
+    );
+  }
+};
+
 const createMany = async (body: IJobCreate[]): Promise<number[] | Error> => {
   try {
     const { data } = await Api.post<number[]>("/jobs/many", { jobs: body });
@@ -63,4 +78,5 @@ export const JobsServices = {
   createMany,
   getAll,
   finishJob,
+  create,
 };

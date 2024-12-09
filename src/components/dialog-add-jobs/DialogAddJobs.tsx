@@ -18,6 +18,7 @@ import { ptBR } from "date-fns/locale";
 import * as yup from "yup";
 
 import { UserServices } from "../../services/api/users/UserServices";
+import { JobsServices } from "../../services/api/jobs/JobsServices";
 
 registerLocale("pt-BR", ptBR);
 
@@ -67,11 +68,16 @@ export const DialogAddJobs: FC<IDialogAddJobsProps> = ({ open, onClose }) => {
   const onSubmit: SubmitHandler<IFormValues> = (data) => {
     const formattedData = {
       ...data,
-      deadline: data.deadline
-        ? data.deadline.toISOString().split("T")[0]
-        : null,
+      deadline: data.deadline ? data.deadline.toISOString().split("T")[0] : "",
     };
-    console.log(formattedData);
+
+    JobsServices.create(formattedData).then((response) => {
+      if (response instanceof Error) {
+        console.error(response);
+        return;
+      }
+      onClose();
+    });
   };
 
   useEffect(() => {
