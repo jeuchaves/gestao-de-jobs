@@ -52,20 +52,27 @@ export const PageJobs = () => {
     setOpenDialog(true);
   };
 
-  const handleCloseDialog = (updated: boolean) => {
-    setSelectedJob(null);
+  const handleCloseDialogAddJob = (updated: boolean) => {
     setOpenDialogAddJob(false);
     if (updated) fetchJobs();
+  };
+
+  const handleCloseDialog = (update: boolean) => {
+    setOpenDialog(false);
+    if (update) fetchJobs();
   };
 
   return (
     <BaseLayout>
       <DialogFinishJob
         open={openDialog}
-        onClose={() => setOpenDialog(false)}
+        onClose={handleCloseDialog}
         jobId={selectedJob}
       />
-      <DialogAddJobs open={openDialogAddJob} onClose={handleCloseDialog} />
+      <DialogAddJobs
+        open={openDialogAddJob}
+        onClose={handleCloseDialogAddJob}
+      />
       <Box
         sx={{
           display: "flex",

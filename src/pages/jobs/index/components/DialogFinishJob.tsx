@@ -21,7 +21,7 @@ import { JobsServices } from "../../../../services/api/jobs/JobsServices";
 
 interface IDialogFinishJobProps {
   open: boolean;
-  onClose: () => void;
+  onClose: (updated: boolean) => void;
   jobId: number | null;
 }
 
@@ -82,12 +82,12 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
         console.error(response);
         return;
       }
-      onClose();
+      onClose(true);
     });
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={() => onClose(false)}>
       <DialogTitle>Concluir job?</DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -192,7 +192,7 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button>Cancelar</Button>
+        <Button onClick={() => onClose(false)}>Cancelar</Button>
         <Button
           type="submit"
           variant="contained"
