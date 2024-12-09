@@ -67,7 +67,9 @@ export const DialogAddJobs: FC<IDialogAddJobsProps> = ({ open, onClose }) => {
   const onSubmit: SubmitHandler<IFormValues> = (data) => {
     const formattedData = {
       ...data,
-      deadline: data.deadline ? data.deadline.toISOString() : null,
+      deadline: data.deadline
+        ? data.deadline.toISOString().split("T")[0]
+        : null,
     };
     console.log(formattedData);
   };
@@ -147,6 +149,7 @@ export const DialogAddJobs: FC<IDialogAddJobsProps> = ({ open, onClose }) => {
                     customInput={
                       <TextField
                         label="Prazo"
+                        fullWidth
                         error={!!errors.deadline}
                         helperText={errors.deadline?.message}
                       />
