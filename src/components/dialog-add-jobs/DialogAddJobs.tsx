@@ -24,7 +24,7 @@ registerLocale("pt-BR", ptBR);
 
 interface IDialogAddJobsProps {
   open: boolean;
-  onClose: () => void;
+  onClose: (updated: boolean) => void;
 }
 
 interface IFormValues {
@@ -76,7 +76,7 @@ export const DialogAddJobs: FC<IDialogAddJobsProps> = ({ open, onClose }) => {
         console.error(response);
         return;
       }
-      onClose();
+      onClose(true);
     });
   };
 
@@ -91,7 +91,7 @@ export const DialogAddJobs: FC<IDialogAddJobsProps> = ({ open, onClose }) => {
   }, []);
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={() => onClose(false)}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogTitle>Adicionar Job</DialogTitle>
         <DialogContent>
@@ -203,7 +203,7 @@ export const DialogAddJobs: FC<IDialogAddJobsProps> = ({ open, onClose }) => {
           </Grid2>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} variant="outlined">
+          <Button onClick={() => onClose(false)} variant="outlined">
             Cancelar
           </Button>
           <Button type="submit" variant="contained">

@@ -31,7 +31,7 @@ export const PageJobs = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [openDialogAddJob, setOpenDialogAddJob] = useState(false);
 
-  useEffect(() => {
+  const fetchJobs = () => {
     const props = filter === "all" ? {} : { completed: true };
     JobsServices.getAll(props).then((response) => {
       if (response instanceof Error) {
@@ -40,11 +40,22 @@ export const PageJobs = () => {
       }
       setJobs(response);
     });
+  };
+
+  useEffect(() => {
+    fetchJobs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
 
   const handleOpenDialog = (id: number) => {
     setSelectedJob(id);
     setOpenDialog(true);
+  };
+
+  const handleCloseDialog = (updated: boolean) => {
+    setSelectedJob(null);
+    setOpenDialogAddJob(false);
+    if (updated) fetchJobs();
   };
 
   return (
@@ -54,10 +65,7 @@ export const PageJobs = () => {
         onClose={() => setOpenDialog(false)}
         jobId={selectedJob}
       />
-      <DialogAddJobs
-        open={openDialogAddJob}
-        onClose={() => setOpenDialogAddJob(false)}
-      />
+      <DialogAddJobs open={openDialogAddJob} onClose={handleCloseDialog} />
       <Box
         sx={{
           display: "flex",
