@@ -108,6 +108,7 @@ export const PageJobs = () => {
             <TableRow>
               <TableCell>N° Doc</TableCell>
               <TableCell>Nome</TableCell>
+              <TableCell>Projeto</TableCell>
               <TableCell>Prazo</TableCell>
               <TableCell>Responsável</TableCell>
               <TableCell>Concluir</TableCell>
@@ -120,6 +121,7 @@ export const PageJobs = () => {
                 <TableRow key={job.id}>
                   <TableCell>{job.nDoc}</TableCell>
                   <TableCell>{job.title}</TableCell>
+                  <TableCell>{job.project}</TableCell>
                   <TableCell
                     sx={{ color: prazo.isLate ? "error.main" : "success.main" }}
                   >
