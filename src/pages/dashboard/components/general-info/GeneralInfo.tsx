@@ -70,10 +70,8 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
 
   return (
     <Box mt={4}>
-      <Box mb={2}>
-        <Typography variant="h5">Visão Geral</Typography>
-      </Box>
-      <Grid2 container spacing={2}>
+      <Typography variant="h5">Visão Geral</Typography>
+      <Grid2 container spacing={2} mt={2}>
         <Grid2 component={Paper} size={{ xs: 12, md: 4 }} sx={{ p: 4 }}>
           <Typography>Total de Jobs</Typography>
           <Typography variant="h4">{totalJobs.total}</Typography>

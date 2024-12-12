@@ -2,6 +2,7 @@ import { Typography } from "@mui/material";
 import { BaseLayout } from "../../layouts/BaseLayout";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 import { GeneralInfo } from "./components/general-info/GeneralInfo";
+import { JobsByResponsible } from "./components/jobs-by-responsible/JobsByResponsible";
 
 const props = {
   startDate: startOfMonth(new Date()).toISOString().split("T")[0],
@@ -19,6 +20,7 @@ export const Dashboard = () => {
     <BaseLayout>
       <Typography variant="h3">Dashboard</Typography>
       <GeneralInfo filter={props} />
+      <JobsByResponsible filter={props} />
     </BaseLayout>
   );
 };
