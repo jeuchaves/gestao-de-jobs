@@ -48,7 +48,7 @@ export const JobsByResponsible: FC<IJobsByResponsibleProps> = ({ filter }) => {
       <Grid2 mt={2} container spacing={2}>
         {userJobStats.map((user) => (
           <Grid2
-            size={{ xs: 12, md: 4 }}
+            size={{ xs: 12, md: 6, lg: 4 }}
             component={Paper}
             sx={{ p: 4 }}
             key={user.userId}
