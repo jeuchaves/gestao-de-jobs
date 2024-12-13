@@ -7,3 +7,5 @@ export * from "./jobs/add-jobs/AddJobs";
 
 export * from "./PageNotFound";
 export * from "./PageAccessDenied";
+
+export * from "./users/index/PageUsers";

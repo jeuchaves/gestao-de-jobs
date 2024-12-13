@@ -6,6 +6,7 @@ import {
   PageJobs,
   PageLogin,
   PageNotFound,
+  PageUsers,
 } from "../pages";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { GuestRoute } from "./GuestRoute";
@@ -21,8 +22,9 @@ export const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to="/dashboard" />} />
+        <Route index element={<Navigate to="/jobs" />} />
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path="usuarios" element={<PageUsers />} />
         <Route path="jobs" element={<Outlet />}>
           <Route index element={<PageJobs />} />
           <Route path="adicionar" element={<AddJobs />} />

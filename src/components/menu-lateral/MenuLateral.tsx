@@ -2,6 +2,7 @@ import {
   AddCircleRounded,
   DashboardRounded,
   LogoutRounded,
+  PersonRounded,
   WorkRounded,
 } from "@mui/icons-material";
 import {
@@ -25,6 +26,7 @@ const menuItems = [
     path: "/jobs/adicionar",
     icon: <AddCircleRounded />,
   },
+  { label: "Usuários", path: "/usuarios", icon: <PersonRounded /> },
 ];
 
 const drawerWidth = 240;

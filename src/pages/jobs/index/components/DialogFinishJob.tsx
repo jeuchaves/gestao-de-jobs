@@ -155,7 +155,7 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
             )}
           </Box>
           <Box mt={2}>
-            <Typography>Horas trabalhadas (em minutos)</Typography>
+            <Typography>Minutos trabalhados</Typography>
             <TextField
               {...register("timeSheet")}
               type="number"
