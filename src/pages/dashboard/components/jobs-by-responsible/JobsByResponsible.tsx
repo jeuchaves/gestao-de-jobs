@@ -1,75 +1,76 @@
-import { Box, Grid2, Paper, Typography } from "@mui/material";
-import { Gauge, gaugeClasses } from "@mui/x-charts";
-import { FC } from "react";
+import { Box, Grid2, Typography } from "@mui/material";
+import { FC, useEffect, useState } from "react";
+import {
+  AnalyticsService,
+  IUserJobStats,
+} from "../../../../services/api/analytics/AnalyticsService";
+import { GaugeComponent } from "./GaugeComponent";
 
 interface IJobsByResponsibleProps {
   filter: {
     startDate: string;
     endDate: string;
-    startDateComparison: string;
-    endDateComparison: string;
   };
 }
 
-interface IUserJobStats {
-  userId: number;
-  userName: string;
-  totalJobs: number;
-  totalCompletedJobs: number;
-}
-
-const userJobStats: IUserJobStats[] = [
-  {
-    userId: 1,
-    userName: "John Doe",
-    totalCompletedJobs: 5,
-    totalJobs: 8,
-  },
-  {
-    userId: 2,
-    userName: "Jane Smith",
-    totalCompletedJobs: 8,
-    totalJobs: 10,
-  },
-  {
-    userId: 3,
-    userName: "Alice Johnson",
-    totalCompletedJobs: 10,
-    totalJobs: 11,
-  },
-];
-
 export const JobsByResponsible: FC<IJobsByResponsibleProps> = ({ filter }) => {
-  console.log(filter);
+  const [userJobStats, setUserJobStats] = useState<IUserJobStats[]>([]);
+  const [totalJobs, setTotalJobs] = useState<{
+    totalJobs: number;
+    totalCompletedJobs: number;
+  }>({ totalJobs: 0, totalCompletedJobs: 0 });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    setIsLoading(true);
+    AnalyticsService.getUsersJobsStats(filter).then((response) => {
+      if (response instanceof Error) {
+        console.error("JobsByResponsible", response);
+        setIsError(true);
+        setIsLoading(false);
+        return;
+      }
+      setIsLoading(false);
+      setIsError(false);
+      setUserJobStats(response.users);
+      setTotalJobs({
+        totalJobs: response.totalJobs,
+        totalCompletedJobs: response.totalCompletedJobs,
+      });
+    });
+  }, [filter]);
+
+  if (isLoading) {
+    return <Typography>Carregando...</Typography>;
+  }
+
+  if (isError) {
+    return <Typography>Erro ao carregar os dados</Typography>;
+  }
+
+  if (!userJobStats.length) {
+    return <Typography>Nenhum dado encontrado</Typography>;
+  }
 
   return (
     <Box mt={4}>
       <Typography variant="h5">Jobs por responsável</Typography>
       <Grid2 mt={2} container spacing={2}>
+        {totalJobs.totalJobs > 0 && (
+          <GaugeComponent
+            userName="Total"
+            totalCompletedJobs={totalJobs.totalCompletedJobs}
+            totalJobs={totalJobs.totalJobs}
+          />
+        )}
         {userJobStats.map((user) => (
-          <Grid2
-            size={{ xs: 12, md: 6, lg: 4 }}
-            component={Paper}
-            sx={{ p: 4 }}
+          <GaugeComponent
             key={user.userId}
-          >
-            <Typography variant="h6" textAlign="center">
-              {user.userName}
-            </Typography>
-            <Gauge
-              height={200}
-              value={user.totalCompletedJobs}
-              valueMax={user.totalJobs}
-              sx={{
-                [`& .${gaugeClasses.valueText}`]: {
-                  fontSize: 32,
-                  fontFamily: "Roboto",
-                  transform: "translate(0px, 0px)",
-                },
-              }}
-              text={({ value, valueMax }) => `${value} / ${valueMax}`}
-            />
-          </Grid2>
+            userName={user.nomeCompleto}
+            totalCompletedJobs={user.totalCompletedJobs}
+            totalJobs={user.totalJobs}
+          />
         ))}
       </Grid2>
     </Box>

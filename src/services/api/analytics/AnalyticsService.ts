@@ -22,6 +22,19 @@ type TJobsChangePercentage = {
   comparisonChangePercentage: number;
 };
 
+export interface IUserJobStats {
+  userId: number;
+  nomeCompleto: string;
+  totalJobs: number;
+  totalCompletedJobs: number;
+}
+
+interface IUserJobsStats {
+  users: IUserJobStats[];
+  totalJobs: number;
+  totalCompletedJobs: number;
+}
+
 const getTotalJobs = async ({
   startDate,
   endDate,
@@ -76,8 +89,27 @@ const getJobsChangePercentage = async ({
   }
 };
 
+const getUsersJobsStats = async ({
+  startDate,
+  endDate,
+}: Omit<IAnalyticsProps, "startDateComparison" | "endDateComparison">): Promise<
+  IUserJobsStats | Error
+> => {
+  try {
+    const urlRelativa = `/analytics/user-jobs-stats?startDate=${startDate}&endDate=${endDate}`;
+    const { data } = await Api.get<IUserJobsStats>(urlRelativa);
+    return data ? data : new Error("Erro ao buscar os registros");
+  } catch (error) {
+    console.error("AnalyticsService.getUsersJobsStats", error);
+    return new Error(
+      (error as { message: string }).message || "Erro ao buscar os registros",
+    );
+  }
+};
+
 export const AnalyticsService = {
   getTotalJobs,
   getJobsAverageTime,
   getJobsChangePercentage,
+  getUsersJobsStats,
 };
