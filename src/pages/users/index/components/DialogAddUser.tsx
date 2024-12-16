@@ -58,10 +58,15 @@ export const DialogAddUser: FC<IDialogAddUserProps> = ({ open, onClose }) => {
     handleSubmit,
     register,
     control,
+    reset,
     formState: { errors },
   } = useForm<IFormValues>({
     resolver: yupResolver(dialogAddUserSchema),
     defaultValues: {
+      email: "",
+      senha: "",
+      nomeCompleto: "",
+      sector: "creative",
       role: "collaborator",
     },
   });
@@ -72,6 +77,7 @@ export const DialogAddUser: FC<IDialogAddUserProps> = ({ open, onClose }) => {
         console.error("Erro ao criar usuário", response);
         return;
       }
+      reset();
       onClose(true);
     });
   };
