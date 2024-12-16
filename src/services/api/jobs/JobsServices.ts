@@ -74,9 +74,21 @@ const finishJob = async (
   }
 };
 
+const deleteById = async (id: number): Promise<void | Error> => {
+  try {
+    await Api.delete(`/jobs/${id}`);
+  } catch (error) {
+    console.error("UserServices.getAll", error);
+    return new Error(
+      (error as { message: string }).message || "Erro ao buscar usuários",
+    );
+  }
+};
+
 export const JobsServices = {
   createMany,
   getAll,
   finishJob,
   create,
+  deleteById,
 };
