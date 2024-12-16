@@ -15,6 +15,10 @@ import {
 import { FC } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
+import {
+  TUserCreate,
+  UserServices,
+} from "../../../../services/api/users/UserServices";
 
 interface IDialogAddUserProps {
   open: boolean;
@@ -29,7 +33,7 @@ interface IFormValues {
   sector: string;
 }
 
-const dialogAddUserSchema: yup.ObjectSchema<IFormValues> = yup.object({
+const dialogAddUserSchema: yup.ObjectSchema<TUserCreate> = yup.object({
   nomeCompleto: yup.string().required(),
   email: yup.string().required(),
   senha: yup.string().required(),
@@ -63,8 +67,13 @@ export const DialogAddUser: FC<IDialogAddUserProps> = ({ open, onClose }) => {
   });
 
   const onSubmit: SubmitHandler<IFormValues> = async (data) => {
-    console.log(data);
-    onClose(true);
+    UserServices.create(data).then((response) => {
+      if (response instanceof Error) {
+        console.error("Erro ao criar usuário", response);
+        return;
+      }
+      onClose(true);
+    });
   };
 
   return (

@@ -26,6 +26,30 @@ const getAll = async ({
   }
 };
 
+export type TUserCreate = {
+  nomeCompleto: string;
+  email: string;
+  senha: string;
+  role: string;
+  sector: string;
+};
+
+const create = async (user: TUserCreate): Promise<number | Error> => {
+  try {
+    const { data } = await Api.post<number>("/auth/signup", user);
+    if (data && typeof data === "number") {
+      return data;
+    }
+    return new Error("Erro ao criar usuário");
+  } catch (error) {
+    console.error("UserServices.create", error);
+    return new Error(
+      (error as { message: string }).message || "Erro ao criar usuário",
+    );
+  }
+};
+
 export const UserServices = {
   getAll,
+  create,
 };
