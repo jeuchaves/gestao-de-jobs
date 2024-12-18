@@ -82,6 +82,20 @@ const finishJob = async (
   }
 };
 
+const updateResponsible = async (
+  id: number,
+  responsibleId: number,
+): Promise<void | Error> => {
+  try {
+    await Api.patch(`/jobs/${id}`, { responsibleId });
+  } catch (error) {
+    console.error("UserServices.getAll", error);
+    return new Error(
+      (error as { message: string }).message || "Erro ao buscar usuários",
+    );
+  }
+};
+
 const deleteById = async (id: number): Promise<void | Error> => {
   try {
     await Api.delete(`/jobs/${id}`);
@@ -99,4 +113,5 @@ export const JobsServices = {
   finishJob,
   create,
   deleteById,
+  updateResponsible,
 };

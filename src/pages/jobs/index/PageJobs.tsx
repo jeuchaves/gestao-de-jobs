@@ -18,14 +18,15 @@ import {
 import { timeSinceDate } from "../../../utils/dateUtils";
 import {
   DeleteRounded,
+  EditRounded,
   LibraryAddCheckRounded,
   PersonRounded,
-  VisibilityRounded,
 } from "@mui/icons-material";
 import { DialogFinishJob } from "./components/DialogFinishJob";
 import { BaseLayout } from "../../../layouts/BaseLayout";
 import { DialogAddJobs } from "../../../components/dialog-add-jobs/DialogAddJobs";
 import { DialogConfirmDelete } from "./components/DialogConfirmDelete";
+import { DialogUpdateResponsible } from "./components/DialogUpdateResponsible";
 
 export const PageJobs = () => {
   const [filter, setFilter] = useState<"all" | "completed">("all");
@@ -38,6 +39,11 @@ export const PageJobs = () => {
   const [selectedJobForDelete, setSelectedJobForDelete] = useState<
     number | null
   >(null);
+
+  const [openDialogUpdateResponsible, setOpenDialogUpdateResponsible] =
+    useState(false);
+  const [selectedJobForUpdateResponsible, setSelectedJobForUpdateResponsible] =
+    useState<number | null>(null);
 
   const fetchJobs = () => {
     const props = filter === "all" ? {} : { completed: true };
@@ -79,12 +85,25 @@ export const PageJobs = () => {
     if (update) fetchJobs();
   };
 
+  const handleOpenDialogUpdateResponsible = (id: number) => {
+    setSelectedJobForUpdateResponsible(id);
+    setOpenDialogUpdateResponsible(true);
+  };
+
+  const handleCloseDialogUpdateResponsible = (update: boolean) => {
+    setOpenDialogUpdateResponsible(false);
+    if (update) fetchJobs();
+  };
+
   const renderActions = (jobId: number) => (
     <Box
       sx={{ display: "flex", gap: 1, flexWrap: "wrap", alignItems: "center" }}
     >
-      <IconButton size="small">
-        <VisibilityRounded color="info" fontSize="small" />
+      <IconButton
+        size="small"
+        onClick={() => handleOpenDialogUpdateResponsible(jobId)}
+      >
+        <EditRounded color="info" fontSize="small" />
       </IconButton>
       {filter === "all" ? (
         <IconButton
@@ -115,6 +134,11 @@ export const PageJobs = () => {
         open={openDialogDeleteJob}
         onClose={handleCloseDialogDeleteJob}
         id={selectedJobForDelete}
+      />
+      <DialogUpdateResponsible
+        open={openDialogUpdateResponsible}
+        onClose={handleCloseDialogUpdateResponsible}
+        id={selectedJobForUpdateResponsible}
       />
       <Box
         sx={{
