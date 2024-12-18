@@ -4,6 +4,8 @@ import { SelectResponsible } from "./steps/SelectResponsible";
 import { IJobCreate } from "../../../types/jobs";
 import { useNavigate } from "react-router-dom";
 import { BaseLayout } from "../../../layouts/BaseLayout";
+import { TResultCreateMany } from "../../../services/api/jobs/JobsServices";
+import { JobReview } from "./steps/JobReview";
 
 export interface IStepsProps {
   handleNext: () => void;
@@ -16,6 +18,10 @@ export const AddJobs = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [jobData, setJobData] = useState<Partial<IJobCreate>[]>([]);
+  const [message, setMessage] = useState<{
+    insertedIds: number[];
+    duplicates: IJobCreate[];
+  } | null>(null);
 
   const saveData = (data: Partial<IJobCreate>[]) => {
     setJobData((prev) => {
@@ -25,6 +31,10 @@ export const AddJobs = () => {
       });
       return updatedData;
     });
+  };
+
+  const handleSaveMessage = (message: TResultCreateMany) => {
+    setMessage(message);
   };
 
   const onNext = () => setStep((prev) => prev + 1);
@@ -40,10 +50,14 @@ export const AddJobs = () => {
       {step === 1 && <UploadCsv handleNext={onNext} saveData={saveData} />}
       {step === 2 && (
         <SelectResponsible
-          handleNext={onFinish}
+          handleNext={onNext}
           handleBack={onBack}
           getData={() => jobData}
+          saveMessage={handleSaveMessage}
         />
+      )}
+      {step === 3 && message && (
+        <JobReview getMessage={() => message} handleNext={onFinish} />
       )}
     </BaseLayout>
   );

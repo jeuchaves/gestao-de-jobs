@@ -12,22 +12,32 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { IStepsProps } from "../AddJobs";
 import { useEffect, useMemo, useState } from "react";
 import { UserServices } from "../../../../services/api/users/UserServices";
 import { IUser } from "../../../../types/users";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { JobsServices } from "../../../../services/api/jobs/JobsServices";
+import {
+  JobsServices,
+  TResultCreateMany,
+} from "../../../../services/api/jobs/JobsServices";
 import { IJobCreate } from "../../../../types/jobs";
+
+export interface ISelectResponsibleProps {
+  handleNext: () => void;
+  handleBack: () => void;
+  getData: () => Partial<IJobCreate>[];
+  saveMessage: (message: TResultCreateMany) => void;
+}
 
 interface IFormValues {
   responsibleId: number[];
 }
 
-export const SelectResponsible: React.FC<Omit<IStepsProps, "saveData">> = ({
+export const SelectResponsible: React.FC<ISelectResponsibleProps> = ({
   handleBack,
   handleNext,
   getData,
+  saveMessage,
 }) => {
   const [usersOptions, setUsersOptions] = useState<IUser[]>([]);
   const {
@@ -69,6 +79,7 @@ export const SelectResponsible: React.FC<Omit<IStepsProps, "saveData">> = ({
         console.error(response);
         return;
       }
+      saveMessage(response);
       handleNext();
     });
   };

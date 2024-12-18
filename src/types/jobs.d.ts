@@ -6,6 +6,7 @@ export interface IJobCreate {
   jobSituation: string;
   deadline: string;
   responsibleId: number;
+  typeDoc?: string;
 }
 
 export interface IJob {

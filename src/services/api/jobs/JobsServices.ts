@@ -23,10 +23,18 @@ const create = async (body: IJobCreate): Promise<number | Error> => {
   }
 };
 
-const createMany = async (body: IJobCreate[]): Promise<number[] | Error> => {
+export type TResultCreateMany = {
+  insertedIds: number[];
+  duplicates: IJobCreate[];
+};
+const createMany = async (
+  body: IJobCreate[],
+): Promise<TResultCreateMany | Error> => {
   try {
-    const { data } = await Api.post<number[]>("/jobs/many", { jobs: body });
-    if (data && Array.isArray(data)) {
+    const { data } = await Api.post<TResultCreateMany>("/jobs/many", {
+      jobs: body,
+    });
+    if (data) {
       return data;
     }
     return new Error("Erro ao criar os jobs");
