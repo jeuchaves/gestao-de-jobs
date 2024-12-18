@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { JobsServices } from "../../../services/api/jobs/JobsServices";
 import { IJob } from "../../../types/jobs";
 import {
@@ -27,20 +27,9 @@ import { BaseLayout } from "../../../layouts/BaseLayout";
 import { DialogAddJobs } from "../../../components/dialog-add-jobs/DialogAddJobs";
 import { DialogConfirmDelete } from "./components/DialogConfirmDelete";
 
-// Função utilitária para agrupar jobs por nDoc
-const groupJobsByNDoc = (jobs: IJob[]) => {
-  return jobs.reduce((acc: Record<string, IJob[]>, job) => {
-    if (!acc[job.nDoc]) {
-      acc[job.nDoc] = [];
-    }
-    acc[job.nDoc].push(job);
-    return acc;
-  }, {});
-};
-
 export const PageJobs = () => {
-  const [groupedJobs, setGroupedJobs] = useState<Record<string, IJob[]>>({});
   const [filter, setFilter] = useState<"all" | "completed">("all");
+  const [jobs, setJobs] = useState<IJob[]>([]);
 
   const [selectedJob, setSelectedJob] = useState<number | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -57,7 +46,7 @@ export const PageJobs = () => {
         console.error(response.message);
         return;
       }
-      setGroupedJobs(groupJobsByNDoc(response));
+      setJobs(response);
     });
   };
 
@@ -169,41 +158,30 @@ export const PageJobs = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {Object.entries(groupedJobs).map(([nDoc, jobs]) => (
-              <React.Fragment key={nDoc}>
-                {/* Título do grupo */}
-                <TableRow>
-                  <TableCell colSpan={6} sx={{ backgroundColor: "#f0f0f0" }}>
-                    <Typography variant="h6">N° Doc: {nDoc}</Typography>
+            {jobs.map((job) => {
+              const prazo = timeSinceDate(job.deadline);
+              return (
+                <TableRow key={job.id}>
+                  <TableCell>{job.nDoc}</TableCell>
+                  <TableCell>{job.title}</TableCell>
+                  <TableCell>{job.project}</TableCell>
+                  <TableCell
+                    sx={{
+                      color: prazo.isLate ? "error.main" : "success.main",
+                    }}
+                  >
+                    {prazo.text}
                   </TableCell>
+                  <TableCell>
+                    <Chip
+                      icon={<PersonRounded />}
+                      label={job.responsibleName}
+                    />
+                  </TableCell>
+                  <TableCell>{renderActions(job.id)}</TableCell>
                 </TableRow>
-                {/* Renderização dos jobs do grupo */}
-                {jobs.map((job) => {
-                  const prazo = timeSinceDate(job.deadline);
-                  return (
-                    <TableRow key={job.id}>
-                      <TableCell>{job.nDoc}</TableCell>
-                      <TableCell>{job.title}</TableCell>
-                      <TableCell>{job.project}</TableCell>
-                      <TableCell
-                        sx={{
-                          color: prazo.isLate ? "error.main" : "success.main",
-                        }}
-                      >
-                        {prazo.text}
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          icon={<PersonRounded />}
-                          label={job.responsibleName}
-                        />
-                      </TableCell>
-                      <TableCell>{renderActions(job.id)}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              </React.Fragment>
-            ))}
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
