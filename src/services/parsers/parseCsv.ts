@@ -35,7 +35,6 @@ const processCsvData = <T extends object>(
     transformHeader,
     skipEmptyLines: true,
   });
-  console.log(result.data);
   return result.data.map((item: T) => {
     if ("prazo" in item && item.prazo) {
       (item as { prazo: string | number | Date }).prazo = formatDate(
