@@ -15,7 +15,7 @@ import { useDropzone } from "react-dropzone";
 import { parse, format } from "date-fns";
 
 import { IStepsProps } from "../AddJobs";
-import { parseCsv } from "../../../../services/parsers/parseCsv";
+import { parseFile } from "../../../../services/parsers/parseCsv";
 
 interface ICsvData {
   n__doc: number;
@@ -37,7 +37,7 @@ export const UploadCsv: React.FC<
     setIsLoading(true);
     const file = acceptedFiles[0];
     try {
-      const data = await parseCsv<ICsvData>(file);
+      const data = await parseFile<ICsvData>(file);
       setCsvData(data);
     } catch (error) {
       console.error("Erro ao processar o arquivo: ", error);
@@ -50,6 +50,10 @@ export const UploadCsv: React.FC<
     accept: {
       "text/csv": [".csv"],
       "application/xml": [".xml"],
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+        ".xlsx",
+        ".xls",
+      ],
     },
   });
 
@@ -61,7 +65,8 @@ export const UploadCsv: React.FC<
   const handleNextStep = () => {
     saveData(
       csvData.map((row) => ({
-        nDoc: row.n__doc.toString(),
+        nDoc:
+          typeof row.n__doc === "number" ? row.n__doc.toString() : row.n__doc,
         typeDoc: row.tipo_doc,
         title: row.titulo,
         project: row.projeto,
@@ -137,7 +142,8 @@ export const UploadCsv: React.FC<
       {csvData.length > 0 && (
         <Box mt={4}>
           <Typography variant="h6">
-            Quantidade de jobs para adicionar: {csvData.length}
+            Quantidade de jobs para adicionar:{" "}
+            {csvData.length > 0 ? csvData.length - 1 : 0}
           </Typography>
         </Box>
       )}
