@@ -1,12 +1,12 @@
 import { Button, Typography } from "@mui/material";
-import { BaseLayout } from "../layouts/BaseLayout";
 import { Link } from "react-router-dom";
+import { BaseLayout } from "../../layouts/BaseLayout";
 
-export const PageAccessDenied = () => {
+export const PageNotFound = () => {
   return (
     <BaseLayout>
       <Typography variant="h3" gutterBottom>
-        Acesso negado
+        Página não encontrada
       </Typography>
       <Link to="/">
         <Button variant="contained">Voltar para página inicial</Button>
