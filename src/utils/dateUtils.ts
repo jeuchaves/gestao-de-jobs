@@ -4,7 +4,7 @@ import {
   isToday,
   isTomorrow,
   isYesterday,
-  parse,
+  parseISO,
   startOfDay,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -12,7 +12,8 @@ import { ptBR } from "date-fns/locale";
 export const timeSinceDate = (
   targetDate: string,
 ): { text: string; isLate: boolean } => {
-  const parsedDate = parse(targetDate, "yyyy-MM-dd", new Date());
+  // const parsedDate = parse(targetDate, "yyyy-MM-dd", new Date());
+  const parsedDate = parseISO(targetDate);
 
   const today = startOfDay(new Date());
   const target = startOfDay(parsedDate);

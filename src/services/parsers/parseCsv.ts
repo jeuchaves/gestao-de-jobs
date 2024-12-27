@@ -7,6 +7,9 @@ const formatDate = (date: string | number | Date): string => {
 
   if (typeof date === "string") {
     parsedDate = parse(date, "dd/MM/yyyy", new Date());
+  } else if (typeof date === "number") {
+    const basedDate = new Date(Date.UTC(1899, 11, 30));
+    parsedDate = new Date(basedDate.getTime() + date * 24 * 60 * 60 * 1000);
   } else {
     parsedDate = new Date(date);
   }

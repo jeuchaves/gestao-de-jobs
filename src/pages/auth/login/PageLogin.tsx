@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { authServices } from "../../../services/api/auth";
 
 type TLoginFormData = {
@@ -24,6 +24,9 @@ const loginSchema: yup.ObjectSchema<TLoginFormData> = yup.object({
 
 export const PageLogin = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectPath =
+    new URLSearchParams(location.search).get("redirect") || "/";
 
   const {
     control,
@@ -39,7 +42,7 @@ export const PageLogin = () => {
         console.error(response);
         return;
       }
-      navigate("/");
+      navigate(redirectPath);
     });
   };
 
