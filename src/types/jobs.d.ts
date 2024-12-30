@@ -22,7 +22,7 @@ export interface IJob {
   estimatedComplexity: string | null;
   isChangeRequest: boolean;
   timeSheet: number;
-  actualComplexity: number | string;
-  contingencies: number | string;
+  actualComplexity: string | null;
+  contingencies: string | null;
   responsibleName: string;
 }

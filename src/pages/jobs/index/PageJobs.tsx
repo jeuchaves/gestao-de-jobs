@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { JobsServices } from "../../../services/api/jobs/JobsServices";
-import { IJob } from "../../../types/jobs";
 import {
   Box,
   Button,
@@ -13,20 +11,26 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import { timeSinceDate } from "../../../utils/dateUtils";
 import {
   DeleteRounded,
   EditRounded,
   LibraryAddCheckRounded,
   PersonRounded,
+  VisibilityRounded,
 } from "@mui/icons-material";
-import { DialogFinishJob } from "./components/DialogFinishJob";
-import { BaseLayout } from "../../../layouts/BaseLayout";
+
 import { DialogAddJobs } from "../../../components/dialog-add-jobs/DialogAddJobs";
-import { DialogConfirmDelete } from "./components/DialogConfirmDelete";
 import { DialogUpdateResponsible } from "./components/DialogUpdateResponsible";
+import { JobsServices } from "../../../services/api/jobs/JobsServices";
+import { DialogConfirmDelete } from "./components/DialogConfirmDelete";
+import { DialogFinishJob } from "./components/DialogFinishJob";
+import { timeSinceDate } from "../../../utils/dateUtils";
+import { BaseLayout } from "../../../layouts/BaseLayout";
+import { IJob } from "../../../types/jobs";
+import { DialogShowJob } from "./components/DialogShowJob";
 
 export const PageJobs = () => {
   const [filter, setFilter] = useState<"all" | "completed">("all");
@@ -54,6 +58,21 @@ export const PageJobs = () => {
       }
       setJobs(response);
     });
+  };
+
+  // Mostrar job
+  const [selectedJobForShow, setSelectedJobForShow] = useState<IJob | null>(
+    null,
+  );
+  const [openDialogShowJob, setOpenDialogShowJob] = useState(false);
+
+  const handleOpenDialogShowJob = (job: IJob) => {
+    setSelectedJobForShow(job);
+    setOpenDialogShowJob(true);
+  };
+  const handleCloseDialogShowJob = () => {
+    setSelectedJobForShow(null);
+    setOpenDialogShowJob(false);
   };
 
   useEffect(() => {
@@ -95,27 +114,43 @@ export const PageJobs = () => {
     if (update) fetchJobs();
   };
 
-  const renderActions = (jobId: number) => (
+  const renderActions = (job: IJob) => (
     <Box
       sx={{ display: "flex", gap: 1, flexWrap: "wrap", alignItems: "center" }}
     >
-      <IconButton
-        size="small"
-        onClick={() => handleOpenDialogUpdateResponsible(jobId)}
-      >
-        <EditRounded color="info" fontSize="small" />
-      </IconButton>
-      {filter === "all" ? (
-        <IconButton
-          onClick={() => handleOpenDialogFinishJob(jobId)}
-          size="small"
-        >
-          <LibraryAddCheckRounded color="success" fontSize="small" />
+      <Tooltip title="Visualizar job" placement="top">
+        <IconButton size="small" onClick={() => handleOpenDialogShowJob(job)}>
+          <VisibilityRounded color="info" fontSize="small" />
         </IconButton>
+      </Tooltip>
+      {filter === "all" ? (
+        <>
+          <Tooltip title="Alterar responsável" placement="top">
+            <IconButton
+              size="small"
+              onClick={() => handleOpenDialogUpdateResponsible(job.id)}
+            >
+              <EditRounded color="warning" fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Finalizar job" placement="top">
+            <IconButton
+              onClick={() => handleOpenDialogFinishJob(job.id)}
+              size="small"
+            >
+              <LibraryAddCheckRounded color="success" fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </>
       ) : null}
-      <IconButton size="small" onClick={() => handleOpenDialogDeleteJob(jobId)}>
-        <DeleteRounded color="error" fontSize="small" />
-      </IconButton>
+      <Tooltip title="Excluir job" placement="top">
+        <IconButton
+          size="small"
+          onClick={() => handleOpenDialogDeleteJob(job.id)}
+        >
+          <DeleteRounded color="error" fontSize="small" />
+        </IconButton>
+      </Tooltip>
     </Box>
   );
 
@@ -139,6 +174,11 @@ export const PageJobs = () => {
         open={openDialogUpdateResponsible}
         onClose={handleCloseDialogUpdateResponsible}
         id={selectedJobForUpdateResponsible}
+      />
+      <DialogShowJob
+        open={openDialogShowJob}
+        onClose={handleCloseDialogShowJob}
+        job={selectedJobForShow}
       />
       <Box
         sx={{
@@ -202,7 +242,7 @@ export const PageJobs = () => {
                       label={job.responsibleName}
                     />
                   </TableCell>
-                  <TableCell>{renderActions(job.id)}</TableCell>
+                  <TableCell>{renderActions(job)}</TableCell>
                 </TableRow>
               );
             })}
