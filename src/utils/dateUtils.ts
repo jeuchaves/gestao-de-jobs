@@ -12,8 +12,11 @@ import { ptBR } from "date-fns/locale";
 export const timeSinceDate = (
   targetDate: string,
 ): { text: string; isLate: boolean } => {
-  // const parsedDate = parse(targetDate, "yyyy-MM-dd", new Date());
   const parsedDate = parseISO(targetDate);
+
+  if (isNaN(parsedDate.getTime())) {
+    return { text: "Data inválida", isLate: false };
+  }
 
   const today = startOfDay(new Date());
   const target = startOfDay(parsedDate);
@@ -33,11 +36,18 @@ export const timeSinceDate = (
   const difference = differenceInDays(target, today);
 
   if (difference > 0) {
-    return { text: `${difference} dias restantes`, isLate: false };
+    return {
+      text: `${difference} dia${difference > 1 ? "s" : ""} restante${difference > 1 ? "s" : ""}`,
+      isLate: false,
+    };
   }
 
   if (difference < 0) {
-    return { text: `${Math.abs(difference)} dias em atraso`, isLate: true };
+    const lateDays = Math.abs(difference);
+    return {
+      text: `${lateDays} dia${lateDays > 1 ? "s" : ""} em atraso`,
+      isLate: true,
+    };
   }
 
   return {
