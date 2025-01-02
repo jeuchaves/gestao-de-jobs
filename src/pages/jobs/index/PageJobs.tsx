@@ -27,10 +27,14 @@ import { DialogUpdateResponsible } from "./components/DialogUpdateResponsible";
 import { JobsServices } from "../../../services/api/jobs/JobsServices";
 import { DialogConfirmDelete } from "./components/DialogConfirmDelete";
 import { DialogFinishJob } from "./components/DialogFinishJob";
-import { timeSinceDate } from "../../../utils/dateUtils";
+import {
+  convertMinutesToHoursAndMinutes,
+  timeSinceDate,
+} from "../../../utils/dateUtils";
 import { BaseLayout } from "../../../layouts/BaseLayout";
 import { IJob } from "../../../types/jobs";
 import { DialogShowJob } from "./components/DialogShowJob";
+import { format } from "date-fns";
 
 export const PageJobs = () => {
   const [filter, setFilter] = useState<"all" | "completed">("all");
@@ -216,7 +220,7 @@ export const PageJobs = () => {
               <TableCell>N° Doc</TableCell>
               <TableCell>Nome</TableCell>
               <TableCell>Projeto</TableCell>
-              <TableCell>Prazo</TableCell>
+              <TableCell>{filter === "all" ? "Prazo" : "Conclusão"}</TableCell>
               <TableCell>Responsável</TableCell>
               <TableCell>Concluir</TableCell>
             </TableRow>
@@ -229,12 +233,21 @@ export const PageJobs = () => {
                   <TableCell>{job.nDoc}</TableCell>
                   <TableCell>{job.title}</TableCell>
                   <TableCell>{job.project}</TableCell>
-                  <TableCell
-                    sx={{
-                      color: prazo.isLate ? "error.main" : "success.main",
-                    }}
-                  >
-                    {prazo.text}
+                  <TableCell>
+                    {filter === "all" ? (
+                      <Box
+                        sx={{
+                          color: prazo.isLate ? "error.main" : "success.main",
+                        }}
+                      >
+                        {prazo.text}
+                      </Box>
+                    ) : (
+                      <Box>
+                        {format(new Date(job.updated_at), "dd/MM/yyyy") +
+                          ` (${convertMinutesToHoursAndMinutes(job.timeSheet).hours}h${convertMinutesToHoursAndMinutes(job.timeSheet).minutes}m)`}
+                      </Box>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Chip

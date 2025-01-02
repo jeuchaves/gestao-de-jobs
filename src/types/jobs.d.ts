@@ -25,4 +25,5 @@ export interface IJob {
   actualComplexity: string | null;
   contingencies: string | null;
   responsibleName: string;
+  updated_at: string;
 }
