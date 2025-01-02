@@ -31,8 +31,6 @@ interface IFormValues {
   nDoc: string;
   title: string;
   project: string;
-  status: string;
-  jobSituation: string;
   deadline: Date | null;
   responsibleId: number;
 }
@@ -41,13 +39,11 @@ const dialogAddJobSchema: yup.ObjectSchema<IFormValues> = yup.object({
   nDoc: yup.string().required(),
   title: yup.string().required(),
   project: yup.string().required(),
-  status: yup.string().required(),
-  jobSituation: yup.string().required(),
   deadline: yup
     .date()
     .typeError("Informe uma data válida")
     .required("Prazo é obrigatório"),
-  responsibleId: yup.number().required(),
+  responsibleId: yup.number().required().nonNullable(),
 });
 
 export const DialogAddJobs: FC<IDialogAddJobsProps> = ({ open, onClose }) => {
@@ -69,6 +65,9 @@ export const DialogAddJobs: FC<IDialogAddJobsProps> = ({ open, onClose }) => {
     const formattedData = {
       ...data,
       deadline: data.deadline ? data.deadline.toISOString().split("T")[0] : "",
+      jobSituation: "Aberto",
+      status: "Prioridades Criação",
+      typeDoc: "Job",
     };
 
     JobsServices.create(formattedData).then((response) => {
@@ -118,24 +117,6 @@ export const DialogAddJobs: FC<IDialogAddJobsProps> = ({ open, onClose }) => {
               <TextField
                 {...register("project")}
                 label="Projeto"
-                fullWidth
-                error={!!errors.nDoc}
-                helperText={errors.nDoc?.message}
-              />
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 6 }}>
-              <TextField
-                {...register("status")}
-                label="Status"
-                fullWidth
-                error={!!errors.nDoc}
-                helperText={errors.nDoc?.message}
-              />
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 6 }}>
-              <TextField
-                {...register("jobSituation")}
-                label="Situação do job"
                 fullWidth
                 error={!!errors.nDoc}
                 helperText={errors.nDoc?.message}
