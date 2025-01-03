@@ -17,6 +17,10 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
     total: number;
     comparison: number;
   } | null>(null);
+  const [totalCompletedJobs, setTotalCompletedJobs] = useState<{
+    total: number;
+    comparison: number;
+  } | null>(null);
   const [averageTime, setAverageTime] = useState<{
     averageTime: number;
     comparisonAverageTime: number;
@@ -36,16 +40,26 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
       AnalyticsService.getTotalJobs(filter),
       AnalyticsService.getJobsAverageTime(filter),
       AnalyticsService.getJobsChangePercentage(filter),
+      AnalyticsService.getTotalCompletedJobs(filter),
     ])
-      .then(([totalJobsData, averageTimeData, changePercentageData]) => {
-        if (totalJobsData instanceof Error) throw totalJobsData;
-        if (averageTimeData instanceof Error) throw averageTimeData;
-        if (changePercentageData instanceof Error) throw changePercentageData;
+      .then(
+        ([
+          totalJobsData,
+          averageTimeData,
+          changePercentageData,
+          completedJobsData,
+        ]) => {
+          if (totalJobsData instanceof Error) throw totalJobsData;
+          if (averageTimeData instanceof Error) throw averageTimeData;
+          if (changePercentageData instanceof Error) throw changePercentageData;
+          if (completedJobsData instanceof Error) throw completedJobsData;
 
-        setTotalJobs(totalJobsData);
-        setAverageTime(averageTimeData);
-        setChangePercentage(changePercentageData);
-      })
+          setTotalJobs(totalJobsData);
+          setTotalCompletedJobs(completedJobsData);
+          setAverageTime(averageTimeData);
+          setChangePercentage(changePercentageData);
+        },
+      )
       .catch((err) => {
         console.error(err);
         setError("Erro ao carregar os dados de análise.");
@@ -53,7 +67,13 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
       .finally(() => setLoading(false));
   }, [filter]);
 
-  if (loading || !totalJobs || !averageTime || !changePercentage) {
+  if (
+    loading ||
+    !totalJobs ||
+    !averageTime ||
+    !changePercentage ||
+    !totalCompletedJobs
+  ) {
     return <Typography>Carregando...</Typography>;
   }
 
@@ -72,12 +92,12 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
     <Box mt={4}>
       <Typography variant="h5">Visão Geral</Typography>
       <Grid2 container spacing={2} mt={2}>
-        <Grid2 component={Paper} size={{ xs: 12, md: 4 }} sx={{ p: 4 }}>
+        <Grid2 component={Paper} size={{ xs: 12, md: 3 }} sx={{ p: 4 }}>
           <Typography>Total de Jobs</Typography>
           <Typography variant="h4">{totalJobs.total}</Typography>
           <Typography>{totalJobs.comparison}</Typography>
         </Grid2>
-        <Grid2 component={Paper} size={{ xs: 12, md: 4 }} sx={{ p: 4 }}>
+        <Grid2 component={Paper} size={{ xs: 12, md: 3 }} sx={{ p: 4 }}>
           <Typography>Tempo médio de resolução</Typography>
           <Typography variant="h4">
             {averageTimeHours}h {averageTimeMinutes}m
@@ -86,7 +106,7 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
             {comparisonAverageTimeHours}h {comparisonAverageTimeMinutes}m
           </Typography>
         </Grid2>
-        <Grid2 component={Paper} size={{ xs: 12, md: 4 }} sx={{ p: 4 }}>
+        <Grid2 component={Paper} size={{ xs: 12, md: 3 }} sx={{ p: 4 }}>
           <Typography>Alterações (%)</Typography>
           <Typography variant="h4">
             {changePercentage.changePercentage.toFixed(2)} %
@@ -94,6 +114,11 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
           <Typography>
             {changePercentage.comparisonChangePercentage.toFixed(2)} %
           </Typography>
+        </Grid2>
+        <Grid2 component={Paper} size={{ xs: 12, md: 3 }} sx={{ p: 4 }}>
+          <Typography>Jobs concluídos</Typography>
+          <Typography variant="h4">{totalCompletedJobs.total}</Typography>
+          <Typography>{totalCompletedJobs.comparison}</Typography>
         </Grid2>
       </Grid2>
     </Box>
