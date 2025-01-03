@@ -1,13 +1,4 @@
-import {
-  differenceInDays,
-  format,
-  isToday,
-  isTomorrow,
-  isYesterday,
-  parseISO,
-  startOfDay,
-} from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { differenceInDays, parseISO, startOfDay } from "date-fns";
 
 export const timeSinceDate = (
   targetDate: string,
@@ -21,39 +12,31 @@ export const timeSinceDate = (
   const today = startOfDay(new Date());
   const target = startOfDay(parsedDate);
 
-  if (isToday(target)) {
-    return { text: "Hoje", isLate: false };
-  }
-
-  if (isTomorrow(target)) {
-    return { text: "Amanhã", isLate: false };
-  }
-
-  if (isYesterday(target)) {
-    return { text: "Ontem", isLate: true };
-  }
-
   const difference = differenceInDays(target, today);
 
-  if (difference > 0) {
+  if (difference === 0) {
+    // Today
+    return { text: "Hoje", isLate: false };
+  } else if (difference === -1) {
+    // Yesterday
+    return { text: "Ontem", isLate: true };
+  } else if (difference === 1) {
+    // Tomorrow
+    return { text: "Amanhã", isLate: false };
+  } else if (difference > 1) {
+    // Future
     return {
       text: `${difference} dia${difference > 1 ? "s" : ""} restante${difference > 1 ? "s" : ""}`,
       isLate: false,
     };
-  }
-
-  if (difference < 0) {
+  } else {
+    // Past
     const lateDays = Math.abs(difference);
     return {
       text: `${lateDays} dia${lateDays > 1 ? "s" : ""} em atraso`,
       isLate: true,
     };
   }
-
-  return {
-    text: format(target, "dd/MM/yyyy", { locale: ptBR }),
-    isLate: false,
-  };
 };
 
 export const convertMinutesToHoursAndMinutes = (minutes: number) => {
