@@ -175,7 +175,7 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
                   )}
                 />
               }
-              label="Solicitação de mudança"
+              label="Esse job é uma alteração"
             />
           </Box>
           <Box mt={2}>

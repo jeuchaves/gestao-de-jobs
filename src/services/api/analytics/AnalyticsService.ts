@@ -53,6 +53,24 @@ const getTotalJobs = async ({
   }
 };
 
+const getTotalCompletedJobs = async ({
+  startDate,
+  endDate,
+  startDateComparison,
+  endDateComparison,
+}: IAnalyticsProps): Promise<TGetTotalJobs | Error> => {
+  try {
+    const urlRelativa = `/analytics/completed-jobs?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}`;
+    const { data } = await Api.get<TGetTotalJobs>(urlRelativa);
+    return data ? data : new Error("Erro ao buscar os registros");
+  } catch (error) {
+    console.error("AnalyticsService.getTotalJobs", error);
+    return new Error(
+      (error as { message: string }).message || "Erro ao buscar os registros",
+    );
+  }
+};
+
 const getJobsAverageTime = async ({
   startDate,
   endDate,
@@ -112,4 +130,5 @@ export const AnalyticsService = {
   getJobsAverageTime,
   getJobsChangePercentage,
   getUsersJobsStats,
+  getTotalCompletedJobs,
 };

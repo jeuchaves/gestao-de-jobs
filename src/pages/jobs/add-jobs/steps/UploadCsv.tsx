@@ -143,7 +143,7 @@ export const UploadCsv: React.FC<
         <Box mt={4}>
           <Typography variant="h6">
             Quantidade de jobs para adicionar:{" "}
-            {csvData.length > 0 ? csvData.length - 1 : 0}
+            {csvData.length > 0 ? csvData.length : 0}
           </Typography>
         </Box>
       )}

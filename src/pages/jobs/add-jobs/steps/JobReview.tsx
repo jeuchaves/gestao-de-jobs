@@ -86,9 +86,9 @@ export const JobReview: FC<IJobReviewProps> = ({ getMessage, handleNext }) => {
     );
   };
 
-  const handleDeleteJob = (job: IJobCreate) => {
-    setVisibleJobs((prevJobs) => prevJobs.filter((j) => j.nDoc !== job.nDoc));
-    showSnackbar(`Job ${job.nDoc} deletado com sucesso`, "error");
+  const handleDeleteJob = (index: number) => {
+    setVisibleJobs((prevJobs) => prevJobs.filter((_, i) => i !== index));
+    showSnackbar(`Job deletado com sucesso`, "error");
   };
 
   const handleCreateJob = (job: IJobCreate) => {
@@ -102,7 +102,7 @@ export const JobReview: FC<IJobReviewProps> = ({ getMessage, handleNext }) => {
     });
   };
 
-  const renderActions = (job: IJobCreate) => (
+  const renderActions = (job: IJobCreate, index: number) => (
     <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
       <Tooltip title="Aprovar">
         <IconButton onClick={() => handleCreateJob(job)}>
@@ -110,7 +110,7 @@ export const JobReview: FC<IJobReviewProps> = ({ getMessage, handleNext }) => {
         </IconButton>
       </Tooltip>
       <Tooltip title="Rejeitar">
-        <IconButton onClick={() => handleDeleteJob(job)}>
+        <IconButton onClick={() => handleDeleteJob(index)}>
           <CancelRounded color="error" />
         </IconButton>
       </Tooltip>
@@ -143,13 +143,13 @@ export const JobReview: FC<IJobReviewProps> = ({ getMessage, handleNext }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {visibleJobs.map((row) => (
-                  <TableRow key={row.nDoc}>
+                {visibleJobs.map((row, index) => (
+                  <TableRow key={index}>
                     <TableCell>{row.nDoc}</TableCell>
                     <TableCell>{row.project}</TableCell>
                     <TableCell>{row.title}</TableCell>
                     <TableCell>{row.typeDoc}</TableCell>
-                    <TableCell>{renderActions(row)}</TableCell>
+                    <TableCell>{renderActions(row, index)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
