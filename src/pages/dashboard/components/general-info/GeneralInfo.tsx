@@ -100,10 +100,11 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
         <Grid2 component={Paper} size={{ xs: 12, md: 3 }} sx={{ p: 4 }}>
           <Typography>Tempo médio de resolução</Typography>
           <Typography variant="h4">
-            {averageTimeHours}h {averageTimeMinutes}m
+            {averageTimeHours.toFixed(0)}h {averageTimeMinutes.toFixed(0)}m
           </Typography>
           <Typography>
-            {comparisonAverageTimeHours}h {comparisonAverageTimeMinutes}m
+            {comparisonAverageTimeHours.toFixed(0)}h{" "}
+            {comparisonAverageTimeMinutes.toFixed(0)}m
           </Typography>
         </Grid2>
         <Grid2 component={Paper} size={{ xs: 12, md: 3 }} sx={{ p: 4 }}>
