@@ -5,6 +5,9 @@ export const timeSinceDate = (
 ): { text: string; isLate: boolean } => {
   const parsedDate = parseISO(targetDate);
 
+  console.log("targetDate", targetDate);
+  console.log("parsedDate", parsedDate);
+
   if (isNaN(parsedDate.getTime())) {
     return { text: "Data inválida", isLate: false };
   }
@@ -12,7 +15,8 @@ export const timeSinceDate = (
   const today = startOfDay(new Date());
   const target = startOfDay(parsedDate);
 
-  const difference = differenceInDays(target, today);
+  // TODO: Fix the difference calculation
+  const difference = differenceInDays(target, today) + 1;
 
   if (difference === 0) {
     // Today
