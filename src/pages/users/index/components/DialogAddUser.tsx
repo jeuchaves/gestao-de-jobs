@@ -12,18 +12,14 @@ import {
   ToggleButtonGroup,
   Typography,
 } from "@mui/material";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 import {
   TUserCreate,
   UserServices,
 } from "../../../../services/api/users/UserServices";
-
-interface IDialogAddUserProps {
-  open: boolean;
-  onClose: (updated: boolean) => void;
-}
+import { IUser } from "../../../../types/users";
 
 interface IFormValues {
   nomeCompleto: string;
@@ -31,6 +27,12 @@ interface IFormValues {
   senha: string;
   role: string;
   sector: string;
+}
+
+interface IDialogAddUserProps {
+  open: boolean;
+  onClose: (updated: boolean) => void;
+  user?: IUser | null;
 }
 
 const dialogAddUserSchema: yup.ObjectSchema<TUserCreate> = yup.object({
@@ -41,7 +43,19 @@ const dialogAddUserSchema: yup.ObjectSchema<TUserCreate> = yup.object({
   sector: yup.string().required(),
 });
 
-export const DialogAddUser: FC<IDialogAddUserProps> = ({ open, onClose }) => {
+const initialFormValues: IFormValues = {
+  nomeCompleto: "",
+  email: "",
+  senha: "",
+  role: "collaborator",
+  sector: "creative",
+};
+
+export const DialogAddUser: FC<IDialogAddUserProps> = ({
+  open,
+  onClose,
+  user,
+}) => {
   const roleOptions = [
     { value: "admin", label: "Administrador" },
     { value: "collaborator", label: "Colaborador" },
@@ -62,30 +76,52 @@ export const DialogAddUser: FC<IDialogAddUserProps> = ({ open, onClose }) => {
     formState: { errors },
   } = useForm<IFormValues>({
     resolver: yupResolver(dialogAddUserSchema),
-    defaultValues: {
-      email: "",
-      senha: "",
-      nomeCompleto: "",
-      sector: "creative",
-      role: "collaborator",
-    },
+    defaultValues: initialFormValues,
   });
 
+  useEffect(() => {
+    if (user && user.id) {
+      reset({
+        email: user.email,
+        nomeCompleto: user.nomeCompleto,
+        sector: user.sector,
+        role: user.role,
+      });
+    } else {
+      reset(initialFormValues);
+    }
+  }, [user, reset]);
+
   const onSubmit: SubmitHandler<IFormValues> = async (data) => {
-    UserServices.create(data).then((response) => {
-      if (response instanceof Error) {
-        console.error("Erro ao criar usuário", response);
-        return;
-      }
-      reset();
-      onClose(true);
-    });
+    if (user && user.id) {
+      // Editar usuário
+      UserServices.updateById(user.id, data).then((response) => {
+        if (response instanceof Error) {
+          console.error("Erro ao editar usuário", response);
+          return;
+        }
+        reset();
+        onClose(true);
+      });
+    } else {
+      // Criar usuário
+      UserServices.create(data).then((response) => {
+        if (response instanceof Error) {
+          console.error("Erro ao criar usuário", response);
+          return;
+        }
+        reset();
+        onClose(true);
+      });
+    }
   };
 
   return (
     <Dialog open={open} onClose={() => onClose(false)}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogTitle>Adicionar usuário</DialogTitle>
+        <DialogTitle>
+          {user?.id ? "Editar usuário" : "Adicionar usuário"}
+        </DialogTitle>
         <DialogContent>
           <Grid2 container spacing={2} mt={2}>
             <Grid2 size={12}>
@@ -184,7 +220,7 @@ export const DialogAddUser: FC<IDialogAddUserProps> = ({ open, onClose }) => {
         <DialogActions>
           <Button onClick={() => onClose(false)}>Cancelar</Button>
           <Button type="submit" variant="contained">
-            Adicionar
+            {user?.id ? "Salvar alterações" : "Criar novo usuário"}
           </Button>
         </DialogActions>
       </form>

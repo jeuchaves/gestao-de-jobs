@@ -20,6 +20,7 @@ import { DialogAddUser } from "./components/DialogAddUser";
 export const PageUsers = () => {
   const [users, setUsers] = useState<IUser[]>([]);
   const [open, setOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
 
   const fetchUsers = () => {
     UserServices.getAll({ page: 1, limit: 10, filter: "" }).then((response) => {
@@ -37,7 +38,13 @@ export const PageUsers = () => {
 
   const handleCloseDialogAddUser = (updated: boolean) => {
     setOpen(false);
+    setSelectedUser(null);
     if (updated) fetchUsers();
+  };
+
+  const handleEditUser = (user: IUser) => {
+    setSelectedUser(user);
+    setOpen(true);
   };
 
   return (
@@ -67,6 +74,7 @@ export const PageUsers = () => {
               <TableCell>Nome</TableCell>
               <TableCell>Setor</TableCell>
               <TableCell>Função</TableCell>
+              <TableCell>Ações</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -75,12 +83,25 @@ export const PageUsers = () => {
                 <TableCell>{user.nomeCompleto}</TableCell>
                 <TableCell>{user.sector}</TableCell>
                 <TableCell>{user.role}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleEditUser(user)}
+                  >
+                    Editar
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <DialogAddUser open={open} onClose={handleCloseDialogAddUser} />
+      <DialogAddUser
+        open={open}
+        onClose={handleCloseDialogAddUser}
+        user={selectedUser}
+      />
     </BaseLayout>
   );
 };
