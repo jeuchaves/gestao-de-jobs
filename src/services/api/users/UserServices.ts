@@ -49,7 +49,22 @@ const create = async (user: TUserCreate): Promise<number | Error> => {
   }
 };
 
+const updateById = async (
+  id: number,
+  user: TUserCreate,
+): Promise<void | Error> => {
+  try {
+    await Api.put<void>(`/usuarios/${id}`, user);
+  } catch (error) {
+    console.error("UserServices.updateById", error);
+    return new Error(
+      (error as { message: string }).message || "Erro ao atualizar usuário",
+    );
+  }
+};
+
 export const UserServices = {
   getAll,
   create,
+  updateById,
 };
