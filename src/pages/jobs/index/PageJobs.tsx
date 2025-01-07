@@ -249,6 +249,7 @@ export const PageJobs = () => {
               : "Por Responsável"}
           </Button>
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+            <MenuItem onClick={() => setSelectedUserId(null)}>Todos</MenuItem>
             {users.map((user) => (
               <MenuItem key={user.id} onClick={() => handleSelectUser(user.id)}>
                 {user.nomeCompleto}
