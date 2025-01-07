@@ -6,6 +6,7 @@ export interface IFilterJobs {
   limit?: number;
   filter?: string;
   completed?: boolean;
+  userId?: number;
 }
 
 const create = async (body: IJobCreate): Promise<number | Error> => {
@@ -51,10 +52,11 @@ const getAll = async ({
   limit,
   filter,
   completed,
+  userId,
 }: IFilterJobs): Promise<IJob[] | Error> => {
   try {
     const { data } = await Api.get(
-      `/jobs?page=${page ?? 1}&limit=${limit ?? 20}&filter=${filter ?? ""}&${completed ? "completed=true" : ""}`,
+      `/jobs?page=${page ?? 1}&limit=${limit ?? 20}&filter=${filter ?? ""}&${completed ? "completed=true" : ""}&${userId ? `userId=${userId}` : ""}`,
     );
     if (data && Array.isArray(data)) {
       return data;
