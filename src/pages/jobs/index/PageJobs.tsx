@@ -4,6 +4,8 @@ import {
   Button,
   Chip,
   IconButton,
+  Menu,
+  MenuItem,
   Paper,
   Table,
   TableBody,
@@ -35,6 +37,8 @@ import { BaseLayout } from "../../../layouts/BaseLayout";
 import { IJob } from "../../../types/jobs";
 import { DialogShowJob } from "./components/DialogShowJob";
 import { format } from "date-fns";
+import { IUser } from "../../../types/users";
+import { UserServices } from "../../../services/api/users/UserServices";
 
 export const PageJobs = () => {
   const [filter, setFilter] = useState<"all" | "completed">("all");
@@ -53,9 +57,23 @@ export const PageJobs = () => {
   const [selectedJobForUpdateResponsible, setSelectedJobForUpdateResponsible] =
     useState<number | null>(null);
 
+  // Menu de filtrar por responsável
+  const [users, setUsers] = useState<IUser[]>([]);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const fetchJobs = () => {
     const props = filter === "all" ? {} : { completed: true };
-    JobsServices.getAll(props).then((response) => {
+    JobsServices.getAll({
+      userId: selectedUserId ? selectedUserId : undefined,
+      completed: props.completed,
+    }).then((response) => {
       if (response instanceof Error) {
         console.error(response.message);
         return;
@@ -69,6 +87,7 @@ export const PageJobs = () => {
     null,
   );
   const [openDialogShowJob, setOpenDialogShowJob] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   const handleOpenDialogShowJob = (job: IJob) => {
     setSelectedJobForShow(job);
@@ -79,10 +98,23 @@ export const PageJobs = () => {
     setOpenDialogShowJob(false);
   };
 
+  const handleSelectUser = (id: number) => {
+    setSelectedUserId(id);
+    handleClose();
+  };
+  // Fim mostrar job
+
   useEffect(() => {
     fetchJobs();
+    UserServices.getAll({}).then((response) => {
+      if (response instanceof Error) {
+        console.error(response);
+        return;
+      }
+      setUsers(response);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter]);
+  }, [filter, selectedUserId]);
 
   const handleOpenDialogFinishJob = (id: number) => {
     setSelectedJob(id);
@@ -211,6 +243,18 @@ export const PageJobs = () => {
           >
             Concluídos
           </Button>
+          <Button variant="outlined" onClick={handleClick}>
+            {selectedUserId
+              ? users.find((v) => v.id === selectedUserId)?.nomeCompleto
+              : "Por Responsável"}
+          </Button>
+          <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+            {users.map((user) => (
+              <MenuItem key={user.id} onClick={() => handleSelectUser(user.id)}>
+                {user.nomeCompleto}
+              </MenuItem>
+            ))}
+          </Menu>
         </Box>
       </Box>
       <TableContainer component={Paper}>
