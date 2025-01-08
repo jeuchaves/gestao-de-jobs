@@ -5,9 +5,6 @@ export const timeSinceDate = (
 ): { text: string; isLate: boolean } => {
   const parsedDate = parseISO(targetDate);
 
-  console.log("targetDate", targetDate);
-  console.log("parsedDate", parsedDate);
-
   if (isNaN(parsedDate.getTime())) {
     return { text: "Data inválida", isLate: false };
   }
