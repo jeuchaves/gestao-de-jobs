@@ -3,6 +3,7 @@ import { BaseLayout } from "../../layouts/BaseLayout";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 import { GeneralInfo } from "./components/general-info/GeneralInfo";
 import { JobsByResponsible } from "./components/jobs-by-responsible/JobsByResponsible";
+import { PersonOutline } from "@mui/icons-material";
 
 const props = {
   startDate: startOfMonth(new Date()).toISOString().split("T")[0],
@@ -34,7 +35,12 @@ export const Dashboard = () => {
             Acompanhe aqui suas evoluções tanto individual quanto em equipe.
           </Typography>
         </Box>
-        <Button size="large" variant="contained" color="secondary">
+        <Button
+          size="large"
+          variant="contained"
+          color="secondary"
+          endIcon={<PersonOutline />}
+        >
           Progresso Individual
         </Button>
       </Box>

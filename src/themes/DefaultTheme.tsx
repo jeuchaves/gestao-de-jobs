@@ -29,5 +29,14 @@ export const DefaultTheme = responsiveFontSizes(
         lineHeight: 1.2,
       },
     },
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: 64,
+          },
+        },
+      },
+    },
   }),
 );
