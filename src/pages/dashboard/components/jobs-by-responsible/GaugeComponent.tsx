@@ -25,7 +25,7 @@ export const GaugeComponent: FC<IGaugeComponentProps> = ({
         sx={{
           [`& .${gaugeClasses.valueText}`]: {
             fontSize: 32,
-            fontFamily: "Roboto",
+            fontFamily: "Cairo, sans-serif",
             transform: "translate(0px, 0px)",
           },
         }}

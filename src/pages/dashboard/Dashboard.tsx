@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { BaseLayout } from "../../layouts/BaseLayout";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 import { GeneralInfo } from "./components/general-info/GeneralInfo";
@@ -18,7 +18,26 @@ const props = {
 export const Dashboard = () => {
   return (
     <BaseLayout>
-      <Typography variant="h3">Dashboard</Typography>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Box>
+          <Typography variant="h1" sx={{ color: "text.secondary" }}>
+            Dashboard
+          </Typography>
+          <Typography sx={{ color: "text.secondary" }}>
+            Acompanhe aqui suas evoluções tanto individual quanto em equipe.
+          </Typography>
+        </Box>
+        <Button size="large" variant="contained" color="secondary">
+          Progresso Individual
+        </Button>
+      </Box>
       <GeneralInfo filter={props} />
       <JobsByResponsible filter={props} />
     </BaseLayout>
