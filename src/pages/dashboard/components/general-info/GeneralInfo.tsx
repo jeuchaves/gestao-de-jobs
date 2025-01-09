@@ -1,5 +1,6 @@
-import { Box, Grid2, Paper, Typography } from "@mui/material";
 import { FC, useEffect, useState } from "react";
+import { Box, Grid2, Paper, styled, Typography, useTheme } from "@mui/material";
+
 import { AnalyticsService } from "../../../../services/api/analytics/AnalyticsService";
 import { convertMinutesToHoursAndMinutes } from "../../../../utils/dateUtils";
 
@@ -12,7 +13,26 @@ interface IGeneralInfoProps {
   };
 }
 
+interface INumberTextProps {
+  value?: number;
+  aboveValueColor?: string;
+  belowOrEqualValueColor?: string;
+}
+
+const NumberText = styled(Typography)<INumberTextProps>(
+  ({ theme, value, aboveValueColor, belowOrEqualValueColor }) => ({
+    fontSize: "3rem",
+    fontWeight: 900,
+    color:
+      value === undefined || value > 0
+        ? aboveValueColor || theme.palette.primary.light
+        : belowOrEqualValueColor || theme.palette.error.light,
+  }),
+);
+
 export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
+  const theme = useTheme();
+
   const [totalJobs, setTotalJobs] = useState<{
     total: number;
     comparison: number;
@@ -90,36 +110,48 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
 
   return (
     <Box mt={4}>
-      <Typography variant="h5">Visão Geral</Typography>
+      <Typography variant="h2" sx={{ color: "text.secondary" }}>
+        Visão Geral
+      </Typography>
       <Grid2 container spacing={2} mt={2}>
         <Grid2 component={Paper} size={{ xs: 12, sm: 6, md: 3 }} sx={{ p: 4 }}>
-          <Typography>Total de Jobs</Typography>
-          <Typography variant="h4">{totalJobs.total}</Typography>
+          <Typography variant="h3">Jobs restantes</Typography>
+          <NumberText value={totalJobs.total}>{totalJobs.total}</NumberText>
           <Typography>{totalJobs.comparison}</Typography>
         </Grid2>
         <Grid2 component={Paper} size={{ xs: 12, sm: 6, md: 3 }} sx={{ p: 4 }}>
-          <Typography>Tempo médio de resolução</Typography>
-          <Typography variant="h4">
+          <Typography variant="h3">Tempo médio</Typography>
+          <NumberText value={averageTime.averageTime}>
             {averageTimeHours.toFixed(0)}h {averageTimeMinutes.toFixed(0)}m
-          </Typography>
+          </NumberText>
           <Typography>
             {comparisonAverageTimeHours.toFixed(0)}h{" "}
             {comparisonAverageTimeMinutes.toFixed(0)}m
           </Typography>
         </Grid2>
         <Grid2 component={Paper} size={{ xs: 12, sm: 6, md: 3 }} sx={{ p: 4 }}>
-          <Typography>Alterações (%)</Typography>
-          <Typography variant="h4">
+          <Typography variant="h3">Taxa de Alterações</Typography>
+          <NumberText value={changePercentage.changePercentage}>
             {changePercentage.changePercentage.toFixed(2)} %
-          </Typography>
+          </NumberText>
           <Typography>
             {changePercentage.comparisonChangePercentage.toFixed(2)} %
           </Typography>
         </Grid2>
-        <Grid2 component={Paper} size={{ xs: 12, sm: 6, md: 3 }} sx={{ p: 4 }}>
-          <Typography>Jobs concluídos</Typography>
-          <Typography variant="h4">{totalCompletedJobs.total}</Typography>
-          <Typography>{totalCompletedJobs.comparison}</Typography>
+        <Grid2
+          component={Paper}
+          size={{ xs: 12, sm: 6, md: 3 }}
+          sx={{ p: 4, bgcolor: "primary.light" }}
+        >
+          <Typography variant="h3" sx={{ color: "text.secondary" }}>
+            Total de Jobs
+          </Typography>
+          <NumberText aboveValueColor={theme.palette.text.secondary}>
+            {totalCompletedJobs.total}
+          </NumberText>
+          <Typography sx={{ color: "text.secondary" }}>
+            {totalCompletedJobs.comparison}
+          </Typography>
         </Grid2>
       </Grid2>
     </Box>

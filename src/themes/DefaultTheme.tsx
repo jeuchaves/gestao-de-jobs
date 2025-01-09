@@ -26,7 +26,27 @@ export const DefaultTheme = responsiveFontSizes(
       h1: {
         fontSize: "3rem",
         fontWeight: 900,
-        lineHeight: 1.2,
+        lineHeight: 1.3,
+      },
+      h2: {
+        fontSize: "2.25rem",
+        lineHeight: 1.3,
+      },
+      h3: {
+        fontSize: "1.69rem",
+        lineHeight: 1.3,
+      },
+      h4: {
+        fontSize: "1.27rem",
+        lineHeight: 1.3,
+      },
+      h5: {
+        fontSize: "0.95rem",
+        lineHeight: 1.3,
+      },
+      h6: {
+        fontSize: "0.71rem",
+        lineHeight: 1.3,
       },
     },
     components: {
@@ -34,6 +54,13 @@ export const DefaultTheme = responsiveFontSizes(
         styleOverrides: {
           root: {
             borderRadius: 64,
+          },
+        },
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            borderRadius: 24,
           },
         },
       },
