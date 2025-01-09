@@ -7,17 +7,17 @@ interface IAnalyticsProps {
   endDateComparison: string;
 }
 
-type TGetTotalJobs = {
+export type TGetTotalJobs = {
   total: number;
   comparison: number;
 };
 
-type TGetJobsAverageTime = {
+export type TGetJobsAverageTime = {
   averageTime: number;
   comparisonAverageTime: number;
 };
 
-type TJobsChangePercentage = {
+export type TJobsChangePercentage = {
   changePercentage: number;
   comparisonChangePercentage: number;
 };

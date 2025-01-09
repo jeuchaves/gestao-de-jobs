@@ -1,8 +1,22 @@
 import { FC, useEffect, useState } from "react";
-import { Box, Grid2, Paper, styled, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Divider,
+  Grid2,
+  Paper,
+  styled,
+  Typography,
+  useTheme,
+} from "@mui/material";
 
-import { AnalyticsService } from "../../../../services/api/analytics/AnalyticsService";
+import {
+  AnalyticsService,
+  TGetJobsAverageTime,
+  TGetTotalJobs,
+  TJobsChangePercentage,
+} from "../../../../services/api/analytics/AnalyticsService";
 import { convertMinutesToHoursAndMinutes } from "../../../../utils/dateUtils";
+import { TrendingDownRounded, TrendingUpRounded } from "@mui/icons-material";
 
 interface IGeneralInfoProps {
   filter: {
@@ -19,7 +33,10 @@ interface INumberTextProps {
   belowOrEqualValueColor?: string;
 }
 
-const NumberText = styled(Typography)<INumberTextProps>(
+const NumberText = styled(Typography, {
+  shouldForwardProp: (prop) =>
+    prop !== "aboveValueColor" && prop !== "belowOrEqualValueColor",
+})<INumberTextProps>(
   ({ theme, value, aboveValueColor, belowOrEqualValueColor }) => ({
     fontSize: "3rem",
     fontWeight: 900,
@@ -30,25 +47,36 @@ const NumberText = styled(Typography)<INumberTextProps>(
   }),
 );
 
+interface IFullWidthChipProps {
+  leftText: string;
+  rightText: string;
+}
+const FullWidthChip: FC<IFullWidthChipProps> = ({ leftText, rightText }) => {
+  return (
+    <Box
+      sx={{
+        bgcolor: "secondary.main",
+        borderRadius: 8,
+        px: "12px",
+        py: "6px",
+        display: "flex",
+        justifyContent: "space-between",
+      }}
+    >
+      <Typography variant="body2">{leftText}</Typography>
+      <Typography variant="body2">{rightText}</Typography>
+    </Box>
+  );
+};
+
 export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
   const theme = useTheme();
 
-  const [totalJobs, setTotalJobs] = useState<{
-    total: number;
-    comparison: number;
-  } | null>(null);
-  const [totalCompletedJobs, setTotalCompletedJobs] = useState<{
-    total: number;
-    comparison: number;
-  } | null>(null);
-  const [averageTime, setAverageTime] = useState<{
-    averageTime: number;
-    comparisonAverageTime: number;
-  } | null>(null);
-  const [changePercentage, setChangePercentage] = useState<{
-    changePercentage: number;
-    comparisonChangePercentage: number;
-  } | null>(null);
+  const [totalJobs, setTotalJobs] = useState<TGetTotalJobs>();
+  const [totalCompletedJobs, setTotalCompletedJobs] = useState<TGetTotalJobs>();
+  const [averageTime, setAverageTime] = useState<TGetJobsAverageTime>();
+  const [changePercent, setChangePercent] = useState<TJobsChangePercentage>();
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,7 +105,7 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
           setTotalJobs(totalJobsData);
           setTotalCompletedJobs(completedJobsData);
           setAverageTime(averageTimeData);
-          setChangePercentage(changePercentageData);
+          setChangePercent(changePercentageData);
         },
       )
       .catch((err) => {
@@ -91,7 +119,7 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
     loading ||
     !totalJobs ||
     !averageTime ||
-    !changePercentage ||
+    !changePercent ||
     !totalCompletedJobs
   ) {
     return <Typography>Carregando...</Typography>;
@@ -114,29 +142,126 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
         Visão Geral
       </Typography>
       <Grid2 container spacing={2} mt={2}>
-        <Grid2 component={Paper} size={{ xs: 12, sm: 6, md: 3 }} sx={{ p: 4 }}>
-          <Typography variant="h3">Jobs restantes</Typography>
-          <NumberText value={totalJobs.total}>{totalJobs.total}</NumberText>
-          <Typography>{totalJobs.comparison}</Typography>
+        <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+          <Box component={Paper} sx={{ height: "100%" }}>
+            <Box sx={{ px: 4, py: 2 }}>
+              <Typography variant="h3">Jobs restantes</Typography>
+              <NumberText value={totalJobs.total}>{totalJobs.total}</NumberText>
+              <FullWidthChip
+                leftText="média time"
+                rightText={`${totalJobs.total}`}
+              />
+            </Box>
+            <Divider />
+            <Box
+              sx={{
+                px: 4,
+                py: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              {totalJobs.comparison > totalJobs.total ? (
+                <TrendingDownRounded sx={{ color: "error.light" }} />
+              ) : (
+                <TrendingUpRounded sx={{ color: "primary.light" }} />
+              )}
+              <Typography
+                sx={{
+                  color:
+                    totalJobs.comparison > totalJobs.total
+                      ? "error.light"
+                      : "primary.light",
+                }}
+              >
+                {((1 - totalJobs.comparison / totalJobs.total) * 100).toFixed(
+                  2,
+                )}
+                %
+              </Typography>
+            </Box>
+          </Box>
         </Grid2>
-        <Grid2 component={Paper} size={{ xs: 12, sm: 6, md: 3 }} sx={{ p: 4 }}>
-          <Typography variant="h3">Tempo médio</Typography>
-          <NumberText value={averageTime.averageTime}>
-            {averageTimeHours.toFixed(0)}h {averageTimeMinutes.toFixed(0)}m
-          </NumberText>
-          <Typography>
-            {comparisonAverageTimeHours.toFixed(0)}h{" "}
-            {comparisonAverageTimeMinutes.toFixed(0)}m
-          </Typography>
+        <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+          <Box component={Paper} sx={{ height: "100%" }}>
+            <Box sx={{ px: 4, py: 2 }}>
+              <Typography variant="h3">Tempo médio</Typography>
+              <NumberText value={averageTime.averageTime}>
+                {averageTimeHours.toFixed(0)}h {averageTimeMinutes.toFixed(0)}m
+              </NumberText>
+              <FullWidthChip
+                leftText="média time"
+                rightText={`${averageTimeHours.toFixed(0)}h ${averageTimeMinutes.toFixed(0)}m`}
+              />
+            </Box>
+            <Divider />
+            <Box
+              sx={{
+                px: 4,
+                py: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              {averageTime.comparisonAverageTime > averageTime.averageTime ? (
+                <TrendingDownRounded sx={{ color: "primary.light" }} />
+              ) : (
+                <TrendingUpRounded sx={{ color: "error.light" }} />
+              )}
+              <Typography
+                sx={{
+                  color:
+                    averageTime.comparisonAverageTime < averageTime.averageTime
+                      ? "error.light"
+                      : "primary.light",
+                }}
+              >
+                {comparisonAverageTimeHours.toFixed(0)}h{" "}
+                {comparisonAverageTimeMinutes.toFixed(0)}m
+              </Typography>
+            </Box>
+          </Box>
         </Grid2>
-        <Grid2 component={Paper} size={{ xs: 12, sm: 6, md: 3 }} sx={{ p: 4 }}>
-          <Typography variant="h3">Taxa de Alterações</Typography>
-          <NumberText value={changePercentage.changePercentage}>
-            {changePercentage.changePercentage.toFixed(2)} %
-          </NumberText>
-          <Typography>
-            {changePercentage.comparisonChangePercentage.toFixed(2)} %
-          </Typography>
+        <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+          <Box component={Paper} sx={{ height: "100%" }}>
+            <Box sx={{ px: 4, py: 2 }}>
+              <Typography variant="h3">Taxa de Alterações</Typography>
+              <NumberText value={changePercent.changePercentage}>
+                {changePercent.changePercentage.toFixed(2)} %
+              </NumberText>
+              <FullWidthChip leftText="média time" rightText={`25%`} />
+            </Box>
+            <Divider />
+            <Box
+              sx={{
+                px: 4,
+                py: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              {changePercent.comparisonChangePercentage >
+              changePercent.changePercentage ? (
+                <TrendingDownRounded sx={{ color: "primary.light" }} />
+              ) : (
+                <TrendingUpRounded sx={{ color: "error.light" }} />
+              )}
+              <Typography
+                sx={{
+                  color:
+                    changePercent.comparisonChangePercentage <
+                    changePercent.changePercentage
+                      ? "error.light"
+                      : "primary.light",
+                }}
+              >
+                {changePercent.comparisonChangePercentage.toFixed(2)} %
+              </Typography>
+            </Box>
+          </Box>
         </Grid2>
         <Grid2
           component={Paper}
