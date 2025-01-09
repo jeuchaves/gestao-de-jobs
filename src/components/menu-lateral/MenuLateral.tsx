@@ -14,6 +14,8 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
 import { authServices } from "../../services/api/auth";
@@ -33,6 +35,12 @@ const drawerWidth = 240;
 
 export const MenuLateral = () => {
   const location = useLocation();
+  const theme = useTheme();
+  const smDown = useMediaQuery(theme.breakpoints.down("sm"));
+
+  if (smDown) {
+    return null;
+  }
 
   return (
     <Drawer
