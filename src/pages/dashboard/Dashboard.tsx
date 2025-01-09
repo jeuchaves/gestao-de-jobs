@@ -25,6 +25,7 @@ export const Dashboard = () => {
           gap: 2,
           justifyContent: "space-between",
           alignItems: "center",
+          flexWrap: "wrap",
         }}
       >
         <Box>
