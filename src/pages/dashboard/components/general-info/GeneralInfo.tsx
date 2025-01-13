@@ -90,7 +90,12 @@ const defaultPeriodComparison = {
     .split("T")[0],
 };
 
-type TPeriodOption = "today" | "yesterday" | "last7days" | "last28days";
+type TPeriodOption =
+  | "today"
+  | "yesterday"
+  | "last7days"
+  | "last28days"
+  | "previousPeriod";
 
 const periodOptions: { label: string; value: TPeriodOption }[] = [
   { label: "Hoje", value: "today" },
@@ -103,6 +108,7 @@ const comparisonPeriodOptions: { label: string; value: TPeriodOption }[] = [
   { label: "Ontem", value: "yesterday" },
   { label: "Últimos 7 dias", value: "last7days" },
   { label: "Últimos 28 dias", value: "last28days" },
+  { label: "Período anterior", value: "previousPeriod" },
 ];
 
 export const GeneralInfo = () => {
@@ -141,38 +147,71 @@ export const GeneralInfo = () => {
   };
 
   const handleSelectPeriod = (period: TPeriodOption) => {
+    let newPeriod;
     switch (period) {
       case "last28days":
-        setPeriod({
-          startDate: startOfDay(subDays(new Date(), 28))
+        newPeriod = {
+          startDate: startOfDay(subDays(new Date(), 28)),
+          endDate: startOfDay(new Date()),
+        };
+        setComparisonPeriod({
+          startDateComparison: startOfDay(subDays(newPeriod.startDate, 28))
             .toISOString()
             .split("T")[0],
-          endDate: startOfDay(new Date()).toISOString().split("T")[0],
+          endDateComparison: startOfDay(subDays(newPeriod.startDate, 1))
+            .toISOString()
+            .split("T")[0],
+        });
+        setPeriod({
+          startDate: newPeriod.startDate.toISOString().split("T")[0],
+          endDate: newPeriod.endDate.toISOString().split("T")[0],
         });
         setKeyPeriod("last28days");
+        setKeyComparisonPeriod("previousPeriod");
         break;
       case "last7days":
-        setPeriod({
-          startDate: startOfDay(subDays(new Date(), 7))
+        newPeriod = {
+          startDate: startOfDay(subDays(new Date(), 7)),
+          endDate: startOfDay(new Date()),
+        };
+        setComparisonPeriod({
+          startDateComparison: startOfDay(subDays(newPeriod.startDate, 7))
             .toISOString()
             .split("T")[0],
-          endDate: startOfDay(new Date()).toISOString().split("T")[0],
+          endDateComparison: startOfDay(subDays(newPeriod.startDate, 1))
+            .toISOString()
+            .split("T")[0],
+        });
+        setPeriod({
+          startDate: newPeriod.startDate.toISOString().split("T")[0],
+          endDate: newPeriod.endDate.toISOString().split("T")[0],
         });
         setKeyPeriod("last7days");
+        setKeyComparisonPeriod("previousPeriod");
         break;
       case "yesterday":
-        setPeriod({
-          startDate: startOfDay(subDays(new Date(), 1))
+        newPeriod = {
+          startDate: startOfDay(subDays(new Date(), 1)),
+          endDate: startOfDay(subDays(new Date(), 1)),
+        };
+        setComparisonPeriod({
+          startDateComparison: startOfDay(subDays(newPeriod.startDate, 1))
             .toISOString()
             .split("T")[0],
-          endDate: startOfDay(subDays(new Date(), 1))
+          endDateComparison: startOfDay(subDays(newPeriod.startDate, 1))
             .toISOString()
             .split("T")[0],
         });
+        setPeriod({
+          startDate: newPeriod.startDate.toISOString().split("T")[0],
+          endDate: newPeriod.endDate.toISOString().split("T")[0],
+        });
         setKeyPeriod("yesterday");
+        setKeyComparisonPeriod("previousPeriod");
         break;
       default:
         setPeriod(defaultPeriod);
+        setComparisonPeriod(defaultPeriodComparison);
         setKeyPeriod("today");
     }
     handleClosePeriodMenu();
@@ -219,6 +258,9 @@ export const GeneralInfo = () => {
           endDateComparison: startOfDay(new Date()).toISOString().split("T")[0],
         });
         setKeyComparisonPeriod("last7days");
+        break;
+      case "previousPeriod":
+        console.log("período anterior");
         break;
       default:
         setKeyComparisonPeriod("yesterday");
