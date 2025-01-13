@@ -442,11 +442,9 @@ export const GeneralInfo = () => {
                           : "primary.light",
                     }}
                   >
-                    {(
-                      (1 - totalJobs.comparison / totalJobs.total) *
-                      100
-                    ).toFixed(2)}
-                    %
+                    {totalJobs.total > 0
+                      ? `${((1 - (totalJobs.comparison || 0) / totalJobs.total) * 100).toFixed(2)}%`
+                      : "N/A"}
                   </Typography>
                 </Box>
               ) : (
