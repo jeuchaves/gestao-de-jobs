@@ -11,6 +11,12 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import {
+  KeyboardArrowDown,
+  TrendingDownRounded,
+  TrendingUpRounded,
+} from "@mui/icons-material";
+import { startOfDay, subDays } from "date-fns";
 
 import {
   AnalyticsService,
@@ -19,12 +25,6 @@ import {
   TJobsChangePercentage,
 } from "../../../../services/api/analytics/AnalyticsService";
 import { convertMinutesToHoursAndMinutes } from "../../../../utils/dateUtils";
-import {
-  KeyboardArrowDown,
-  TrendingDownRounded,
-  TrendingUpRounded,
-} from "@mui/icons-material";
-import { startOfDay, subDays } from "date-fns";
 
 interface INumberTextProps {
   value?: number;
@@ -77,27 +77,29 @@ interface IFilterData {
 }
 
 const defaultPeriod = {
-  startDate: startOfDay(new Date()).toISOString().split("T")[0], // Hoje
-  endDate: startOfDay(new Date()).toISOString().split("T")[0], // Hoje
+  startDate: startOfDay(new Date()).toISOString().split("T")[0],
+  endDate: startOfDay(new Date()).toISOString().split("T")[0],
 };
 
 const defaultPeriodComparison = {
   startDateComparison: startOfDay(subDays(new Date(), 1))
     .toISOString()
-    .split("T")[0], // Ontem
+    .split("T")[0],
   endDateComparison: startOfDay(subDays(new Date(), 1))
     .toISOString()
-    .split("T")[0], // Ontem
+    .split("T")[0],
 };
 
-const periodOptions = [
+type TPeriodOption = "today" | "yesterday" | "last7days" | "last28days";
+
+const periodOptions: { label: string; value: TPeriodOption }[] = [
   { label: "Hoje", value: "today" },
   { label: "Ontem", value: "yesterday" },
   { label: "Últimos 7 dias", value: "last7days" },
   { label: "Últimos 28 dias", value: "last28days" },
 ];
 
-const comparisonPeriodOptions = [
+const comparisonPeriodOptions: { label: string; value: TPeriodOption }[] = [
   { label: "Ontem", value: "yesterday" },
   { label: "Últimos 7 dias", value: "last7days" },
   { label: "Últimos 28 dias", value: "last28days" },
@@ -124,6 +126,7 @@ export const GeneralInfo = () => {
   // INÍCIO MENU PERÍODO
   const [period, setPeriod] =
     useState<Pick<IFilterData, "startDate" | "endDate">>(defaultPeriod);
+  const [keyPeriod, setKeyPeriod] = useState<TPeriodOption>("today");
 
   const [periodAnchorEl, setPeriodAnchorEl] = useState<null | HTMLElement>(
     null,
@@ -137,7 +140,7 @@ export const GeneralInfo = () => {
     setPeriodAnchorEl(null);
   };
 
-  const handleSelectPeriod = (period: string) => {
+  const handleSelectPeriod = (period: TPeriodOption) => {
     switch (period) {
       case "last28days":
         setPeriod({
@@ -146,6 +149,7 @@ export const GeneralInfo = () => {
             .split("T")[0],
           endDate: startOfDay(new Date()).toISOString().split("T")[0],
         });
+        setKeyPeriod("last28days");
         break;
       case "last7days":
         setPeriod({
@@ -154,6 +158,7 @@ export const GeneralInfo = () => {
             .split("T")[0],
           endDate: startOfDay(new Date()).toISOString().split("T")[0],
         });
+        setKeyPeriod("last7days");
         break;
       case "yesterday":
         setPeriod({
@@ -164,9 +169,11 @@ export const GeneralInfo = () => {
             .toISOString()
             .split("T")[0],
         });
+        setKeyPeriod("yesterday");
         break;
       default:
         setPeriod(defaultPeriod);
+        setKeyPeriod("today");
     }
     handleClosePeriodMenu();
   };
@@ -176,6 +183,8 @@ export const GeneralInfo = () => {
   const [comparisonPeriod, setComparisonPeriod] = useState<
     Pick<IFilterData, "startDateComparison" | "endDateComparison">
   >(defaultPeriodComparison);
+  const [keyComparisonPeriod, setKeyComparisonPeriod] =
+    useState<TPeriodOption>("yesterday");
 
   const [comparisonPeriodAnchorEl, setComparisonPeriodAnchorEl] =
     useState<null | HTMLElement>(null);
@@ -191,7 +200,7 @@ export const GeneralInfo = () => {
     setComparisonPeriodAnchorEl(null);
   };
 
-  const handleSelectPeriodComparison = (period: string) => {
+  const handleSelectPeriodComparison = (period: TPeriodOption) => {
     switch (period) {
       case "last28days":
         setComparisonPeriod({
@@ -200,6 +209,7 @@ export const GeneralInfo = () => {
             .split("T")[0],
           endDateComparison: startOfDay(new Date()).toISOString().split("T")[0],
         });
+        setKeyComparisonPeriod("last28days");
         break;
       case "last7days":
         setComparisonPeriod({
@@ -208,8 +218,10 @@ export const GeneralInfo = () => {
             .split("T")[0],
           endDateComparison: startOfDay(new Date()).toISOString().split("T")[0],
         });
+        setKeyComparisonPeriod("last7days");
         break;
       default:
+        setKeyComparisonPeriod("yesterday");
         setComparisonPeriod(defaultPeriodComparison);
     }
     handleCloseComparisonPeriodMenu();
@@ -287,24 +299,47 @@ export const GeneralInfo = () => {
           Visão Geral
         </Typography>
         <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-          <Button
-            variant="outlined"
-            color="secondary"
-            size="large"
-            endIcon={<KeyboardArrowDown />}
-            onClick={handleOpenPeriodMenu}
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              flexWrap: "wrap",
+              alignItems: "center",
+            }}
           >
-            Período
-          </Button>
-          <Button
-            onClick={handleOpenComparisonPeriodMenu}
-            variant="outlined"
-            color="secondary"
-            size="large"
-            endIcon={<KeyboardArrowDown />}
+            <Typography sx={{ color: "text.secondary" }}>Período:</Typography>
+            <Button
+              color="secondary"
+              size="large"
+              endIcon={<KeyboardArrowDown />}
+              onClick={handleOpenPeriodMenu}
+            >
+              {periodOptions.find((option) => option.value === keyPeriod)
+                ?.label || "Período"}
+            </Button>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              flexWrap: "wrap",
+              alignItems: "center",
+            }}
           >
-            Comparação
-          </Button>
+            <Typography sx={{ color: "text.secondary" }}>
+              Comparar com:
+            </Typography>
+            <Button
+              onClick={handleOpenComparisonPeriodMenu}
+              color="secondary"
+              size="large"
+              endIcon={<KeyboardArrowDown />}
+            >
+              {comparisonPeriodOptions.find(
+                (option) => option.value === keyComparisonPeriod,
+              )?.label || "Comparação"}
+            </Button>
+          </Box>
           <Menu
             onClose={handleClosePeriodMenu}
             open={openPeriodMenu}
