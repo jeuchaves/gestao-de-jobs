@@ -45,7 +45,7 @@ export const Dashboard = () => {
           Progresso Individual
         </Button>
       </Box>
-      <GeneralInfo filter={props} />
+      <GeneralInfo />
       <JobsByResponsible filter={props} />
     </BaseLayout>
   );

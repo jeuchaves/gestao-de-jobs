@@ -1,8 +1,11 @@
 import { FC, useEffect, useState } from "react";
 import {
   Box,
+  Button,
   Divider,
   Grid2,
+  Menu,
+  MenuItem,
   Paper,
   styled,
   Typography,
@@ -16,16 +19,12 @@ import {
   TJobsChangePercentage,
 } from "../../../../services/api/analytics/AnalyticsService";
 import { convertMinutesToHoursAndMinutes } from "../../../../utils/dateUtils";
-import { TrendingDownRounded, TrendingUpRounded } from "@mui/icons-material";
-
-interface IGeneralInfoProps {
-  filter: {
-    startDate: string;
-    endDate: string;
-    startDateComparison: string;
-    endDateComparison: string;
-  };
-}
+import {
+  KeyboardArrowDown,
+  TrendingDownRounded,
+  TrendingUpRounded,
+} from "@mui/icons-material";
+import { startOfDay, subDays } from "date-fns";
 
 interface INumberTextProps {
   value?: number;
@@ -51,6 +50,7 @@ interface IFullWidthChipProps {
   leftText: string;
   rightText: string;
 }
+
 const FullWidthChip: FC<IFullWidthChipProps> = ({ leftText, rightText }) => {
   return (
     <Box
@@ -69,7 +69,41 @@ const FullWidthChip: FC<IFullWidthChipProps> = ({ leftText, rightText }) => {
   );
 };
 
-export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
+interface IFilterData {
+  startDate: string;
+  endDate: string;
+  startDateComparison: string;
+  endDateComparison: string;
+}
+
+const defaultPeriod = {
+  startDate: startOfDay(new Date()).toISOString().split("T")[0], // Hoje
+  endDate: startOfDay(new Date()).toISOString().split("T")[0], // Hoje
+};
+
+const defaultPeriodComparison = {
+  startDateComparison: startOfDay(subDays(new Date(), 1))
+    .toISOString()
+    .split("T")[0], // Ontem
+  endDateComparison: startOfDay(subDays(new Date(), 1))
+    .toISOString()
+    .split("T")[0], // Ontem
+};
+
+const periodOptions = [
+  { label: "Hoje", value: "today" },
+  { label: "Ontem", value: "yesterday" },
+  { label: "Últimos 7 dias", value: "last7days" },
+  { label: "Últimos 28 dias", value: "last28days" },
+];
+
+const comparisonPeriodOptions = [
+  { label: "Ontem", value: "yesterday" },
+  { label: "Últimos 7 dias", value: "last7days" },
+  { label: "Últimos 28 dias", value: "last28days" },
+];
+
+export const GeneralInfo = () => {
   const theme = useTheme();
 
   const [totalJobs, setTotalJobs] = useState<TGetTotalJobs>();
@@ -80,15 +114,124 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const { hours: averageTimeHours, minutes: averageTimeMinutes } =
+    convertMinutesToHoursAndMinutes(averageTime?.averageTime || 0);
+  const {
+    hours: comparisonAverageTimeHours,
+    minutes: comparisonAverageTimeMinutes,
+  } = convertMinutesToHoursAndMinutes(averageTime?.comparisonAverageTime || 0);
+
+  // INÍCIO MENU PERÍODO
+  const [period, setPeriod] =
+    useState<Pick<IFilterData, "startDate" | "endDate">>(defaultPeriod);
+
+  const [periodAnchorEl, setPeriodAnchorEl] = useState<null | HTMLElement>(
+    null,
+  );
+  const openPeriodMenu = Boolean(periodAnchorEl);
+
+  const handleOpenPeriodMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setPeriodAnchorEl(event.currentTarget);
+  };
+  const handleClosePeriodMenu = () => {
+    setPeriodAnchorEl(null);
+  };
+
+  const handleSelectPeriod = (period: string) => {
+    switch (period) {
+      case "last28days":
+        setPeriod({
+          startDate: startOfDay(subDays(new Date(), 28))
+            .toISOString()
+            .split("T")[0],
+          endDate: startOfDay(new Date()).toISOString().split("T")[0],
+        });
+        break;
+      case "last7days":
+        setPeriod({
+          startDate: startOfDay(subDays(new Date(), 7))
+            .toISOString()
+            .split("T")[0],
+          endDate: startOfDay(new Date()).toISOString().split("T")[0],
+        });
+        break;
+      case "yesterday":
+        setPeriod({
+          startDate: startOfDay(subDays(new Date(), 1))
+            .toISOString()
+            .split("T")[0],
+          endDate: startOfDay(subDays(new Date(), 1))
+            .toISOString()
+            .split("T")[0],
+        });
+        break;
+      default:
+        setPeriod(defaultPeriod);
+    }
+    handleClosePeriodMenu();
+  };
+  // FIM MENU PERÍODO
+
+  // INÍCIO MENU PERÍODO COMPARAÇÃO
+  const [comparisonPeriod, setComparisonPeriod] = useState<
+    Pick<IFilterData, "startDateComparison" | "endDateComparison">
+  >(defaultPeriodComparison);
+
+  const [comparisonPeriodAnchorEl, setComparisonPeriodAnchorEl] =
+    useState<null | HTMLElement>(null);
+  const openComparisonPeriodMenu = Boolean(comparisonPeriodAnchorEl);
+
+  const handleOpenComparisonPeriodMenu = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    setComparisonPeriodAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseComparisonPeriodMenu = () => {
+    setComparisonPeriodAnchorEl(null);
+  };
+
+  const handleSelectPeriodComparison = (period: string) => {
+    switch (period) {
+      case "last28days":
+        setComparisonPeriod({
+          startDateComparison: startOfDay(subDays(new Date(), 28))
+            .toISOString()
+            .split("T")[0],
+          endDateComparison: startOfDay(new Date()).toISOString().split("T")[0],
+        });
+        break;
+      case "last7days":
+        setComparisonPeriod({
+          startDateComparison: startOfDay(subDays(new Date(), 7))
+            .toISOString()
+            .split("T")[0],
+          endDateComparison: startOfDay(new Date()).toISOString().split("T")[0],
+        });
+        break;
+      default:
+        setComparisonPeriod(defaultPeriodComparison);
+    }
+    handleCloseComparisonPeriodMenu();
+  };
+
+  // FIM MENU PERÍODO COMPARAÇÃO
+
   useEffect(() => {
     setLoading(true);
     setError(null);
 
     Promise.all([
-      AnalyticsService.getTotalJobs(filter),
-      AnalyticsService.getJobsAverageTime(filter),
-      AnalyticsService.getJobsChangePercentage(filter),
-      AnalyticsService.getTotalCompletedJobs(filter),
+      AnalyticsService.getTotalJobs({ ...period, ...comparisonPeriod }),
+      AnalyticsService.getJobsAverageTime({ ...period, ...comparisonPeriod }),
+      AnalyticsService.getJobsChangePercentage({
+        ...period,
+        ...comparisonPeriod,
+      }),
+      AnalyticsService.getTotalCompletedJobs({
+        ...period,
+        ...comparisonPeriod,
+      }),
     ])
       .then(
         ([
@@ -113,7 +256,7 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
         setError("Erro ao carregar os dados de análise.");
       })
       .finally(() => setLoading(false));
-  }, [filter]);
+  }, [period, comparisonPeriod]);
 
   if (
     loading ||
@@ -129,18 +272,69 @@ export const GeneralInfo: FC<IGeneralInfoProps> = ({ filter }) => {
     return <Typography>{error}</Typography>;
   }
 
-  const { hours: averageTimeHours, minutes: averageTimeMinutes } =
-    convertMinutesToHoursAndMinutes(averageTime?.averageTime || 0);
-  const {
-    hours: comparisonAverageTimeHours,
-    minutes: comparisonAverageTimeMinutes,
-  } = convertMinutesToHoursAndMinutes(averageTime?.comparisonAverageTime || 0);
-
   return (
     <Box mt={4}>
-      <Typography variant="h2" sx={{ color: "text.secondary" }}>
-        Visão Geral
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+        }}
+      >
+        <Typography variant="h2" sx={{ color: "text.secondary" }}>
+          Visão Geral
+        </Typography>
+        <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            size="large"
+            endIcon={<KeyboardArrowDown />}
+            onClick={handleOpenPeriodMenu}
+          >
+            Período
+          </Button>
+          <Button
+            onClick={handleOpenComparisonPeriodMenu}
+            variant="outlined"
+            color="secondary"
+            size="large"
+            endIcon={<KeyboardArrowDown />}
+          >
+            Comparação
+          </Button>
+          <Menu
+            onClose={handleClosePeriodMenu}
+            open={openPeriodMenu}
+            anchorEl={periodAnchorEl}
+          >
+            {periodOptions.map((option) => (
+              <MenuItem
+                key={option.value}
+                onClick={() => handleSelectPeriod(option.value)}
+              >
+                {option.label}
+              </MenuItem>
+            ))}
+          </Menu>
+          <Menu
+            onClose={handleCloseComparisonPeriodMenu}
+            open={openComparisonPeriodMenu}
+            anchorEl={comparisonPeriodAnchorEl}
+          >
+            {comparisonPeriodOptions.map((option) => (
+              <MenuItem
+                key={option.value}
+                onClick={() => handleSelectPeriodComparison(option.value)}
+              >
+                {option.label}
+              </MenuItem>
+            ))}
+          </Menu>
+        </Box>
+      </Box>
       <Grid2 container spacing={2} mt={2}>
         <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
           <Box component={Paper} sx={{ height: "100%" }}>
