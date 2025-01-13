@@ -405,6 +405,7 @@ export const GeneralInfo = () => {
               <MenuItem
                 key={option.value}
                 onClick={() => handleSelectPeriodComparison(option.value)}
+                disabled
               >
                 {option.label}
               </MenuItem>
