@@ -7,6 +7,7 @@ import {
   Menu,
   MenuItem,
   Paper,
+  Skeleton,
   styled,
   Typography,
   useTheme,
@@ -312,16 +313,6 @@ export const GeneralInfo = () => {
       .finally(() => setLoading(false));
   }, [period, comparisonPeriod]);
 
-  if (
-    loading ||
-    !totalJobs ||
-    !averageTime ||
-    !changePercent ||
-    !totalCompletedJobs
-  ) {
-    return <Typography>Carregando...</Typography>;
-  }
-
   if (error) {
     return <Typography>{error}</Typography>;
   }
@@ -418,40 +409,49 @@ export const GeneralInfo = () => {
           <Box component={Paper} sx={{ height: "100%" }}>
             <Box sx={{ px: 4, py: 2 }}>
               <Typography variant="h3">Jobs restantes</Typography>
-              <NumberText value={totalJobs.total}>{totalJobs.total}</NumberText>
-              <FullWidthChip
-                leftText="média time"
-                rightText={`${totalJobs.total}`}
-              />
+              <NumberText value={totalJobs?.total ?? 0}>
+                {loading || !totalJobs ? <Skeleton /> : totalJobs.total}
+              </NumberText>
+              {!loading && totalJobs && (
+                <FullWidthChip
+                  leftText="média time"
+                  rightText={`${totalJobs.total}`}
+                />
+              )}
             </Box>
             <Divider />
-            <Box
-              sx={{
-                px: 4,
-                py: 2,
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-              }}
-            >
-              {totalJobs.comparison > totalJobs.total ? (
-                <TrendingDownRounded sx={{ color: "error.light" }} />
+            <Box sx={{ px: 4, py: 2 }}>
+              {!loading && totalJobs ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  {totalJobs.comparison > totalJobs.total ? (
+                    <TrendingDownRounded sx={{ color: "error.light" }} />
+                  ) : (
+                    <TrendingUpRounded sx={{ color: "primary.light" }} />
+                  )}
+                  <Typography
+                    sx={{
+                      color:
+                        totalJobs.comparison > totalJobs.total
+                          ? "error.light"
+                          : "primary.light",
+                    }}
+                  >
+                    {(
+                      (1 - totalJobs.comparison / totalJobs.total) *
+                      100
+                    ).toFixed(2)}
+                    %
+                  </Typography>
+                </Box>
               ) : (
-                <TrendingUpRounded sx={{ color: "primary.light" }} />
+                <Skeleton />
               )}
-              <Typography
-                sx={{
-                  color:
-                    totalJobs.comparison > totalJobs.total
-                      ? "error.light"
-                      : "primary.light",
-                }}
-              >
-                {((1 - totalJobs.comparison / totalJobs.total) * 100).toFixed(
-                  2,
-                )}
-                %
-              </Typography>
             </Box>
           </Box>
         </Grid2>
@@ -459,40 +459,54 @@ export const GeneralInfo = () => {
           <Box component={Paper} sx={{ height: "100%" }}>
             <Box sx={{ px: 4, py: 2 }}>
               <Typography variant="h3">Tempo médio</Typography>
-              <NumberText value={averageTime.averageTime}>
-                {averageTimeHours.toFixed(0)}h {averageTimeMinutes.toFixed(0)}m
+              <NumberText value={averageTime?.averageTime ?? 0}>
+                {loading || !averageTime ? (
+                  <Skeleton />
+                ) : (
+                  `${averageTimeHours.toFixed(0)}h ${averageTimeMinutes.toFixed(
+                    0,
+                  )}m`
+                )}
               </NumberText>
-              <FullWidthChip
-                leftText="média time"
-                rightText={`${averageTimeHours.toFixed(0)}h ${averageTimeMinutes.toFixed(0)}m`}
-              />
+              {!loading && averageTime && (
+                <FullWidthChip
+                  leftText="média time"
+                  rightText={`${averageTimeHours.toFixed(0)}h ${averageTimeMinutes.toFixed(0)}m`}
+                />
+              )}
             </Box>
             <Divider />
-            <Box
-              sx={{
-                px: 4,
-                py: 2,
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-              }}
-            >
-              {averageTime.comparisonAverageTime > averageTime.averageTime ? (
-                <TrendingDownRounded sx={{ color: "primary.light" }} />
+            <Box sx={{ px: 4, py: 2 }}>
+              {!loading && averageTime ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  {averageTime.comparisonAverageTime >
+                  averageTime.averageTime ? (
+                    <TrendingDownRounded sx={{ color: "primary.light" }} />
+                  ) : (
+                    <TrendingUpRounded sx={{ color: "error.light" }} />
+                  )}
+                  <Typography
+                    sx={{
+                      color:
+                        averageTime.comparisonAverageTime <
+                        averageTime.averageTime
+                          ? "error.light"
+                          : "primary.light",
+                    }}
+                  >
+                    {comparisonAverageTimeHours.toFixed(0)}h{" "}
+                    {comparisonAverageTimeMinutes.toFixed(0)}m
+                  </Typography>
+                </Box>
               ) : (
-                <TrendingUpRounded sx={{ color: "error.light" }} />
+                <Skeleton />
               )}
-              <Typography
-                sx={{
-                  color:
-                    averageTime.comparisonAverageTime < averageTime.averageTime
-                      ? "error.light"
-                      : "primary.light",
-                }}
-              >
-                {comparisonAverageTimeHours.toFixed(0)}h{" "}
-                {comparisonAverageTimeMinutes.toFixed(0)}m
-              </Typography>
             </Box>
           </Box>
         </Grid2>
@@ -500,38 +514,48 @@ export const GeneralInfo = () => {
           <Box component={Paper} sx={{ height: "100%" }}>
             <Box sx={{ px: 4, py: 2 }}>
               <Typography variant="h3">Taxa de Alterações</Typography>
-              <NumberText value={changePercent.changePercentage}>
-                {changePercent.changePercentage.toFixed(2)} %
+              <NumberText value={changePercent?.changePercentage ?? 0}>
+                {loading || !changePercent ? (
+                  <Skeleton />
+                ) : (
+                  changePercent.changePercentage.toFixed(2) + "%"
+                )}
               </NumberText>
-              <FullWidthChip leftText="média time" rightText={`25%`} />
+              {!loading && changePercent && (
+                <FullWidthChip leftText="média time" rightText={`25%`} />
+              )}
             </Box>
             <Divider />
-            <Box
-              sx={{
-                px: 4,
-                py: 2,
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-              }}
-            >
-              {changePercent.comparisonChangePercentage >
-              changePercent.changePercentage ? (
-                <TrendingDownRounded sx={{ color: "primary.light" }} />
+            <Box sx={{ px: 4, py: 2 }}>
+              {!loading && changePercent ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  {changePercent.comparisonChangePercentage >
+                  changePercent.changePercentage ? (
+                    <TrendingDownRounded sx={{ color: "primary.light" }} />
+                  ) : (
+                    <TrendingUpRounded sx={{ color: "error.light" }} />
+                  )}
+                  <Typography
+                    sx={{
+                      color:
+                        changePercent.comparisonChangePercentage <
+                        changePercent.changePercentage
+                          ? "error.light"
+                          : "primary.light",
+                    }}
+                  >
+                    {changePercent.comparisonChangePercentage.toFixed(2)} %
+                  </Typography>
+                </Box>
               ) : (
-                <TrendingUpRounded sx={{ color: "error.light" }} />
+                <Skeleton />
               )}
-              <Typography
-                sx={{
-                  color:
-                    changePercent.comparisonChangePercentage <
-                    changePercent.changePercentage
-                      ? "error.light"
-                      : "primary.light",
-                }}
-              >
-                {changePercent.comparisonChangePercentage.toFixed(2)} %
-              </Typography>
             </Box>
           </Box>
         </Grid2>
@@ -544,11 +568,12 @@ export const GeneralInfo = () => {
             Total de Jobs
           </Typography>
           <NumberText aboveValueColor={theme.palette.text.secondary}>
-            {totalCompletedJobs.total}
+            {loading || !totalCompletedJobs ? (
+              <Skeleton />
+            ) : (
+              totalCompletedJobs.total
+            )}
           </NumberText>
-          <Typography sx={{ color: "text.secondary" }}>
-            {totalCompletedJobs.comparison}
-          </Typography>
         </Grid2>
       </Grid2>
     </Box>
