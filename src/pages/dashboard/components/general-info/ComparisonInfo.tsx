@@ -17,6 +17,8 @@ export const ComparisonInfo: FC<IComparisonInfoProps> = ({
   invertTrend = false,
   formatComparison,
 }) => {
+  comparison = 1000;
+
   const hasIncreased = invertTrend
     ? current - comparison <= 0
     : current - comparison > 0;
@@ -45,37 +47,3 @@ export const ComparisonInfo: FC<IComparisonInfoProps> = ({
     </Box>
   );
 };
-
-/**
- * <Box sx={{ px: 4, py: 2 }}>
-              {!loading && changePercent ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  {changePercent.comparisonChangePercentage >
-                  changePercent.changePercentage ? (
-                    <TrendingDownRounded sx={{ color: "primary.light" }} />
-                  ) : (
-                    <TrendingUpRounded sx={{ color: "error.light" }} />
-                  )}
-                  <Typography
-                    sx={{
-                      color:
-                        changePercent.comparisonChangePercentage <
-                        changePercent.changePercentage
-                          ? "error.light"
-                          : "primary.light",
-                    }}
-                  >
-                    {changePercent.comparisonChangePercentage.toFixed(2)} %
-                  </Typography>
-                </Box>
-              ) : (
-                <Skeleton />
-              )}
-            </Box>
- */
