@@ -405,6 +405,7 @@ export const GeneralInfo = () => {
         </Box>
       </Box>
       <Grid2 container spacing={2} mt={2}>
+        {/* Jobs restantes */}
         <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
           <Box component={Paper} sx={{ height: "100%" }}>
             <Box sx={{ px: 4, py: 2 }}>
@@ -453,6 +454,7 @@ export const GeneralInfo = () => {
             </Box>
           </Box>
         </Grid2>
+        {/* Tempo médio */}
         <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
           <Box component={Paper} sx={{ height: "100%" }}>
             <Box sx={{ px: 4, py: 2 }}>
@@ -508,6 +510,7 @@ export const GeneralInfo = () => {
             </Box>
           </Box>
         </Grid2>
+        {/* Taxa de alterações */}
         <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
           <Box component={Paper} sx={{ height: "100%" }}>
             <Box sx={{ px: 4, py: 2 }}>
@@ -557,21 +560,25 @@ export const GeneralInfo = () => {
             </Box>
           </Box>
         </Grid2>
-        <Grid2
-          component={Paper}
-          size={{ xs: 12, sm: 6, md: 3 }}
-          sx={{ p: 4, bgcolor: "primary.light" }}
-        >
-          <Typography variant="h3" sx={{ color: "text.secondary" }}>
-            Total de Jobs
-          </Typography>
-          <NumberText aboveValueColor={theme.palette.text.secondary}>
-            {loading || !totalCompletedJobs ? (
-              <Skeleton />
-            ) : (
-              totalCompletedJobs.total
-            )}
-          </NumberText>
+        {/* Total de jobs */}
+        <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
+          <Box
+            component={Paper}
+            sx={{ height: "100%", bgcolor: "primary.light" }}
+          >
+            <Box sx={{ px: 4, py: 2 }}>
+              <Typography variant="h3" sx={{ color: "text.secondary" }}>
+                Total de Jobs
+              </Typography>
+              <NumberText aboveValueColor={theme.palette.text.secondary}>
+                {loading || !totalCompletedJobs ? (
+                  <Skeleton />
+                ) : (
+                  totalCompletedJobs.total
+                )}
+              </NumberText>
+            </Box>
+          </Box>
         </Grid2>
       </Grid2>
     </Box>
