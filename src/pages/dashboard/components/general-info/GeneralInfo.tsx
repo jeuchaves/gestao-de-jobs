@@ -12,11 +12,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import {
-  KeyboardArrowDown,
-  TrendingDownRounded,
-  TrendingUpRounded,
-} from "@mui/icons-material";
+import { KeyboardArrowDown } from "@mui/icons-material";
 import { startOfDay, subDays } from "date-fns";
 
 import {
@@ -26,6 +22,7 @@ import {
   TJobsChangePercentage,
 } from "../../../../services/api/analytics/AnalyticsService";
 import { convertMinutesToHoursAndMinutes } from "../../../../utils/dateUtils";
+import { ComparisonInfo } from "./ComparisonInfo";
 
 interface INumberTextProps {
   value?: number;
@@ -125,10 +122,6 @@ export const GeneralInfo = () => {
 
   const { hours: averageTimeHours, minutes: averageTimeMinutes } =
     convertMinutesToHoursAndMinutes(averageTime?.averageTime || 0);
-  const {
-    hours: comparisonAverageTimeHours,
-    minutes: comparisonAverageTimeMinutes,
-  } = convertMinutesToHoursAndMinutes(averageTime?.comparisonAverageTime || 0);
 
   // INÍCIO MENU PERÍODO
   const [period, setPeriod] =
@@ -269,7 +262,6 @@ export const GeneralInfo = () => {
     }
     handleCloseComparisonPeriodMenu();
   };
-
   // FIM MENU PERÍODO COMPARAÇÃO
 
   useEffect(() => {
@@ -421,37 +413,11 @@ export const GeneralInfo = () => {
               )}
             </Box>
             <Divider />
-            <Box sx={{ px: 4, py: 2 }}>
-              {!loading && totalJobs ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  {totalJobs.comparison > totalJobs.total ? (
-                    <TrendingDownRounded sx={{ color: "error.light" }} />
-                  ) : (
-                    <TrendingUpRounded sx={{ color: "primary.light" }} />
-                  )}
-                  <Typography
-                    sx={{
-                      color:
-                        totalJobs.comparison > totalJobs.total
-                          ? "error.light"
-                          : "primary.light",
-                    }}
-                  >
-                    {totalJobs.total > 0
-                      ? `${((1 - (totalJobs.comparison || 0) / totalJobs.total) * 100).toFixed(2)}%`
-                      : "N/A"}
-                  </Typography>
-                </Box>
-              ) : (
-                <Skeleton />
-              )}
-            </Box>
+            <ComparisonInfo
+              comparison={totalJobs?.comparison}
+              current={totalJobs?.total}
+              isLoading={loading}
+            />
           </Box>
         </Grid2>
         {/* Tempo médio */}
@@ -476,38 +442,17 @@ export const GeneralInfo = () => {
               )}
             </Box>
             <Divider />
-            <Box sx={{ px: 4, py: 2 }}>
-              {!loading && averageTime ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  {averageTime.comparisonAverageTime >
-                  averageTime.averageTime ? (
-                    <TrendingDownRounded sx={{ color: "primary.light" }} />
-                  ) : (
-                    <TrendingUpRounded sx={{ color: "error.light" }} />
-                  )}
-                  <Typography
-                    sx={{
-                      color:
-                        averageTime.comparisonAverageTime <
-                        averageTime.averageTime
-                          ? "error.light"
-                          : "primary.light",
-                    }}
-                  >
-                    {comparisonAverageTimeHours.toFixed(0)}h{" "}
-                    {comparisonAverageTimeMinutes.toFixed(0)}m
-                  </Typography>
-                </Box>
-              ) : (
-                <Skeleton />
-              )}
-            </Box>
+            <ComparisonInfo
+              isLoading={loading}
+              comparison={averageTime?.comparisonAverageTime}
+              current={averageTime?.averageTime}
+              invertTrend
+              formatComparison={(value) => {
+                const { hours, minutes } =
+                  convertMinutesToHoursAndMinutes(value);
+                return `${hours.toFixed(0)}h ${minutes.toFixed(0)}m`;
+              }}
+            />
           </Box>
         </Grid2>
         {/* Taxa de alterações */}
@@ -527,37 +472,13 @@ export const GeneralInfo = () => {
               )}
             </Box>
             <Divider />
-            <Box sx={{ px: 4, py: 2 }}>
-              {!loading && changePercent ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  {changePercent.comparisonChangePercentage >
-                  changePercent.changePercentage ? (
-                    <TrendingDownRounded sx={{ color: "primary.light" }} />
-                  ) : (
-                    <TrendingUpRounded sx={{ color: "error.light" }} />
-                  )}
-                  <Typography
-                    sx={{
-                      color:
-                        changePercent.comparisonChangePercentage <
-                        changePercent.changePercentage
-                          ? "error.light"
-                          : "primary.light",
-                    }}
-                  >
-                    {changePercent.comparisonChangePercentage.toFixed(2)} %
-                  </Typography>
-                </Box>
-              ) : (
-                <Skeleton />
-              )}
-            </Box>
+            <ComparisonInfo
+              isLoading={loading}
+              comparison={changePercent?.comparisonChangePercentage}
+              current={changePercent?.changePercentage}
+              invertTrend
+              formatComparison={(value) => `${value.toFixed(2)}%`}
+            />
           </Box>
         </Grid2>
         {/* Total de jobs */}
