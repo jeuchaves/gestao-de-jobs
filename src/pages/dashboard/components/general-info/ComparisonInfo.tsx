@@ -17,8 +17,6 @@ export const ComparisonInfo: FC<IComparisonInfoProps> = ({
   invertTrend = false,
   formatComparison,
 }) => {
-  comparison = 1000;
-
   const hasIncreased = invertTrend
     ? current - comparison <= 0
     : current - comparison > 0;
