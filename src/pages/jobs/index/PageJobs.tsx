@@ -19,8 +19,10 @@ import {
 import {
   DeleteRounded,
   EditRounded,
+  ExpandCircleDownRounded,
   LibraryAddCheckRounded,
   PersonRounded,
+  PostAddRounded,
   VisibilityRounded,
 } from "@mui/icons-material";
 
@@ -116,6 +118,7 @@ export const PageJobs = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, selectedUserId]);
 
+  // Dialog de concluir job
   const handleOpenDialogFinishJob = (id: number) => {
     setSelectedJob(id);
     setOpenDialog(true);
@@ -125,29 +128,34 @@ export const PageJobs = () => {
     if (update) fetchJobs();
   };
 
+  // Dialog de adicionar job
   const handleCloseDialogAddJob = (updated: boolean) => {
     setOpenDialogAddJob(false);
     if (updated) fetchJobs();
   };
-
   const handleOpenDialogDeleteJob = (id: number) => {
     setSelectedJobForDelete(id);
     setOpenDialogDeleteJob(true);
   };
 
+  // Dialog de deletar job
   const handleCloseDialogDeleteJob = (update: boolean) => {
     setOpenDialogDeleteJob(false);
     if (update) fetchJobs();
   };
-
   const handleOpenDialogUpdateResponsible = (id: number) => {
     setSelectedJobForUpdateResponsible(id);
     setOpenDialogUpdateResponsible(true);
   };
 
+  // Dialog de atualizar responsável do job
   const handleCloseDialogUpdateResponsible = (update: boolean) => {
     setOpenDialogUpdateResponsible(false);
     if (update) fetchJobs();
+  };
+
+  const toggleFilter = () => {
+    setFilter(filter === "all" ? "completed" : "all");
   };
 
   const renderActions = (job: IJob) => (
@@ -192,71 +200,64 @@ export const PageJobs = () => {
 
   return (
     <BaseLayout>
-      <DialogFinishJob
-        open={openDialog}
-        onClose={handleCloseDialogFinishJob}
-        jobId={selectedJob}
-      />
-      <DialogAddJobs
-        open={openDialogAddJob}
-        onClose={handleCloseDialogAddJob}
-      />
-      <DialogConfirmDelete
-        open={openDialogDeleteJob}
-        onClose={handleCloseDialogDeleteJob}
-        id={selectedJobForDelete}
-      />
-      <DialogUpdateResponsible
-        open={openDialogUpdateResponsible}
-        onClose={handleCloseDialogUpdateResponsible}
-        id={selectedJobForUpdateResponsible}
-      />
-      <DialogShowJob
-        open={openDialogShowJob}
-        onClose={handleCloseDialogShowJob}
-        job={selectedJobForShow}
-      />
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
           gap: 2,
+          justifyContent: "space-between",
           alignItems: "center",
+          flexWrap: "wrap",
+          mb: 2,
         }}
       >
-        <Typography variant="h3" gutterBottom>
-          Jobs
-        </Typography>
+        <Box>
+          <Typography variant="h1" sx={{ color: "text.secondary" }}>
+            Jobs
+          </Typography>
+          <Typography sx={{ color: "text.secondary" }}>
+            A lista de jobs do time está aqui
+          </Typography>
+        </Box>
         <Box sx={{ display: "flex", gap: 2 }}>
-          <Button onClick={() => setOpenDialogAddJob(true)}>
+          <Button
+            onClick={() => setOpenDialogAddJob(true)}
+            variant="contained"
+            size="large"
+            color="secondary"
+            startIcon={<PostAddRounded />}
+            sx={{ color: "primary.light", textTransform: "none" }}
+          >
             Adicionar novo job
           </Button>
           <Button
-            variant={filter === "all" ? "contained" : "outlined"}
-            onClick={() => setFilter("all")}
+            variant="contained"
+            sx={{ bgcolor: "primary.light" }}
+            endIcon={<ExpandCircleDownRounded />}
+            size="large"
+            onClick={toggleFilter}
           >
-            Todos
+            {filter === "all" ? "Todos" : "Concluídos"}
           </Button>
           <Button
-            variant={filter === "completed" ? "contained" : "outlined"}
-            onClick={() => setFilter("completed")}
+            variant="contained"
+            onClick={handleClick}
+            sx={{ bgcolor: "primary.light" }}
+            size="large"
+            endIcon={<PersonRounded />}
           >
-            Concluídos
-          </Button>
-          <Button variant="outlined" onClick={handleClick}>
             {selectedUserId
               ? users.find((v) => v.id === selectedUserId)?.nomeCompleto
-              : "Por Responsável"}
+              : "Responsável"}
           </Button>
-          <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-            <MenuItem onClick={() => setSelectedUserId(null)}>Todos</MenuItem>
-            {users.map((user) => (
-              <MenuItem key={user.id} onClick={() => handleSelectUser(user.id)}>
-                {user.nomeCompleto}
-              </MenuItem>
-            ))}
-          </Menu>
         </Box>
+        <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+          <MenuItem onClick={() => setSelectedUserId(null)}>Todos</MenuItem>
+          {users.map((user) => (
+            <MenuItem key={user.id} onClick={() => handleSelectUser(user.id)}>
+              {user.nomeCompleto}
+            </MenuItem>
+          ))}
+        </Menu>
       </Box>
       <TableContainer component={Paper}>
         <Table>
@@ -307,6 +308,30 @@ export const PageJobs = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <DialogFinishJob
+        open={openDialog}
+        onClose={handleCloseDialogFinishJob}
+        jobId={selectedJob}
+      />
+      <DialogAddJobs
+        open={openDialogAddJob}
+        onClose={handleCloseDialogAddJob}
+      />
+      <DialogConfirmDelete
+        open={openDialogDeleteJob}
+        onClose={handleCloseDialogDeleteJob}
+        id={selectedJobForDelete}
+      />
+      <DialogUpdateResponsible
+        open={openDialogUpdateResponsible}
+        onClose={handleCloseDialogUpdateResponsible}
+        id={selectedJobForUpdateResponsible}
+      />
+      <DialogShowJob
+        open={openDialogShowJob}
+        onClose={handleCloseDialogShowJob}
+        job={selectedJobForShow}
+      />
     </BaseLayout>
   );
 };
