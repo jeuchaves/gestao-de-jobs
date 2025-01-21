@@ -84,16 +84,8 @@ export const GeneralInfo = () => {
   const { hours: averageTimeHours, minutes: averageTimeMinutes } =
     convertMinutesToHoursAndMinutes(averageTime?.averageTime || 0);
 
-  const {
-    period,
-    comparisonPeriod,
-    keyPeriod,
-    keyComparisonPeriod,
-    selectPeriod,
-    selectPeriodComparison,
-    periodOptions,
-    comparisonPeriodOptions,
-  } = usePeriodSelection();
+  const { period, comparisonPeriod, keyPeriod, selectPeriod, periodOptions } =
+    usePeriodSelection();
 
   // INÍCIO MENU PERÍODO
   const [periodAnchorEl, setPeriodAnchorEl] = useState<null | HTMLElement>(
@@ -111,24 +103,6 @@ export const GeneralInfo = () => {
     handleClosePeriodMenu();
   };
   // FIM MENU PERÍODO
-
-  // INÍCIO MENU PERÍODO COMPARAÇÃO
-  const [comparisonPeriodAnchorEl, setComparisonPeriodAnchorEl] =
-    useState<null | HTMLElement>(null);
-  const openComparisonPeriodMenu = Boolean(comparisonPeriodAnchorEl);
-  const handleOpenComparisonPeriodMenu = (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    setComparisonPeriodAnchorEl(event.currentTarget);
-  };
-  const handleCloseComparisonPeriodMenu = () => {
-    setComparisonPeriodAnchorEl(null);
-  };
-  const handleSelectPeriodComparison = (selectedPeriod: TPeriodOption) => {
-    selectPeriodComparison(selectedPeriod);
-    handleCloseComparisonPeriodMenu();
-  };
-  // FIM MENU PERÍODO COMPARAÇÃO
 
   useEffect(() => {
     setLoading(true);
@@ -209,28 +183,6 @@ export const GeneralInfo = () => {
                 ?.label || "Período"}
             </Button>
           </Box>
-          <Box
-            sx={{
-              display: "flex",
-              gap: 1,
-              flexWrap: "wrap",
-              alignItems: "center",
-            }}
-          >
-            <Typography sx={{ color: "text.secondary" }}>
-              Comparar com:
-            </Typography>
-            <Button
-              onClick={handleOpenComparisonPeriodMenu}
-              color="secondary"
-              size="large"
-              endIcon={<KeyboardArrowDown />}
-            >
-              {comparisonPeriodOptions.find(
-                (option) => option.value === keyComparisonPeriod,
-              )?.label || "Comparação"}
-            </Button>
-          </Box>
           <Menu
             onClose={handleClosePeriodMenu}
             open={openPeriodMenu}
@@ -240,21 +192,6 @@ export const GeneralInfo = () => {
               <MenuItem
                 key={option.value}
                 onClick={() => handleSelectPeriod(option.value)}
-              >
-                {option.label}
-              </MenuItem>
-            ))}
-          </Menu>
-          <Menu
-            onClose={handleCloseComparisonPeriodMenu}
-            open={openComparisonPeriodMenu}
-            anchorEl={comparisonPeriodAnchorEl}
-          >
-            {comparisonPeriodOptions.map((option) => (
-              <MenuItem
-                key={option.value}
-                onClick={() => handleSelectPeriodComparison(option.value)}
-                disabled
               >
                 {option.label}
               </MenuItem>
