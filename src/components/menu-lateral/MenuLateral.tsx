@@ -58,17 +58,19 @@ export const MenuLateral = () => {
       <Box role="presentation">
         <UserInfo />
         <Box sx={{ p: 2 }}>
-          <Button
-            variant="contained"
-            color="secondary"
-            disableElevation
-            startIcon={<PostAddRounded />}
-            sx={{ color: "primary.light" }}
-            size="large"
-            fullWidth
-          >
-            Adicionar jobs
-          </Button>
+          <Link to="/jobs/adicionar" style={{ textDecoration: "none" }}>
+            <Button
+              variant="contained"
+              color="secondary"
+              disableElevation
+              startIcon={<PostAddRounded />}
+              sx={{ color: "primary.light" }}
+              size="large"
+              fullWidth
+            >
+              Adicionar jobs
+            </Button>
+          </Link>
         </Box>
         <List>
           {menuItems.map((item) => (
