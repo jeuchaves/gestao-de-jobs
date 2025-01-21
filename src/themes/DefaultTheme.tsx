@@ -61,6 +61,9 @@ export const DefaultTheme = responsiveFontSizes(
         styleOverrides: {
           root: {
             borderRadius: 24,
+            "&.MuiDrawer-paper": {
+              borderRadius: 0,
+            },
           },
         },
       },
