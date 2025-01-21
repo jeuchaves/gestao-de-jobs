@@ -1,12 +1,13 @@
 import {
-  AddCircleRounded,
-  DashboardRounded,
+  CrisisAlertRounded,
+  GridViewRounded,
+  GroupRounded,
   LogoutRounded,
-  PersonRounded,
-  WorkRounded,
+  PostAddRounded,
 } from "@mui/icons-material";
 import {
   Box,
+  Button,
   Drawer,
   List,
   ListItem,
@@ -21,14 +22,9 @@ import { authServices } from "../../services/api/auth";
 import { UserInfo } from "./components/UserInfo";
 
 const menuItems = [
-  { label: "Dashboard", path: "/dashboard", icon: <DashboardRounded /> },
-  { label: "Jobs", path: "/jobs", icon: <WorkRounded /> },
-  {
-    label: "Adicionar jobs",
-    path: "/jobs/adicionar",
-    icon: <AddCircleRounded />,
-  },
-  { label: "Usuários", path: "/usuarios", icon: <PersonRounded /> },
+  { label: "Dashboard", path: "/dashboard", icon: <GridViewRounded /> },
+  { label: "Jobs", path: "/jobs", icon: <CrisisAlertRounded /> },
+  { label: "Usuários", path: "/usuarios", icon: <GroupRounded /> },
 ];
 
 const drawerWidth = 240;
@@ -61,6 +57,19 @@ export const MenuLateral = () => {
     >
       <Box role="presentation">
         <UserInfo />
+        <Box sx={{ p: 2 }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            disableElevation
+            startIcon={<PostAddRounded />}
+            sx={{ color: "primary.light" }}
+            size="large"
+            fullWidth
+          >
+            Adicionar jobs
+          </Button>
+        </Box>
         <List>
           {menuItems.map((item) => (
             <Link
