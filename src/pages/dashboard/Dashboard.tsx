@@ -4,6 +4,7 @@ import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 import { GeneralInfo } from "./components/general-info/GeneralInfo";
 import { JobsByResponsible } from "./components/jobs-by-responsible/JobsByResponsible";
 import { PersonOutline } from "@mui/icons-material";
+import { Progression } from "./components/progression/Progression";
 
 const props = {
   startDate: startOfMonth(new Date()).toISOString().split("T")[0],
@@ -46,6 +47,7 @@ export const Dashboard = () => {
         </Button>
       </Box>
       <GeneralInfo />
+      <Progression />
       <JobsByResponsible filter={props} />
     </BaseLayout>
   );
