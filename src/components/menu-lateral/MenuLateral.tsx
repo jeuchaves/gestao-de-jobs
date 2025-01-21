@@ -80,7 +80,30 @@ export const MenuLateral = () => {
               style={{ textDecoration: "none", color: "inherit" }}
             >
               <ListItem disablePadding>
-                <ListItemButton selected={location.pathname === item.path}>
+                <ListItemButton
+                  selected={location.pathname === item.path}
+                  sx={{
+                    position: "relative",
+                    "&.Mui-selected": {
+                      backgroundColor: "transparent",
+                      color: "primary.dark",
+                      "&::after": {
+                        content: '""',
+                        position: "absolute",
+                        top: "50%",
+                        right: 0,
+                        transform: "translateY(-50%)",
+                        width: "8px",
+                        height: "100%",
+                        backgroundColor: "primary.main",
+                        borderRadius: "4px 0 0 4px",
+                      },
+                    },
+                    "&.Mui-selected .MuiListItemIcon-root": {
+                      color: "primary.dark",
+                    },
+                  }}
+                >
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.label} />
                 </ListItemButton>
