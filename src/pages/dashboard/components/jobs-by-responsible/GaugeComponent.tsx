@@ -15,7 +15,7 @@ export const GaugeComponent: FC<IGaugeComponentProps> = ({
 }) => {
   return (
     <Grid2 size={{ xs: 12, md: 6, lg: 4 }} component={Paper} sx={{ p: 4 }}>
-      <Typography variant="h6" textAlign="center">
+      <Typography variant="h3" textAlign="center">
         {userName}
       </Typography>
       <Gauge

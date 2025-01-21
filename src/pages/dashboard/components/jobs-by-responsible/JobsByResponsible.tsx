@@ -55,7 +55,9 @@ export const JobsByResponsible: FC<IJobsByResponsibleProps> = ({ filter }) => {
 
   return (
     <Box mt={4}>
-      <Typography variant="h5">Jobs por responsável</Typography>
+      <Typography variant="h2" sx={{ color: "text.secondary" }}>
+        Jobs por responsável
+      </Typography>
       <Grid2 mt={2} container spacing={2}>
         {totalJobs.totalJobs > 0 && (
           <GaugeComponent
