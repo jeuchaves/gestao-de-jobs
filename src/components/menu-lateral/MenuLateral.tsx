@@ -7,7 +7,6 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
-  Divider,
   Drawer,
   List,
   ListItem,
@@ -19,6 +18,7 @@ import {
 } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
 import { authServices } from "../../services/api/auth";
+import { UserInfo } from "./components/UserInfo";
 
 const menuItems = [
   { label: "Dashboard", path: "/dashboard", icon: <DashboardRounded /> },
@@ -60,6 +60,7 @@ export const MenuLateral = () => {
       }}
     >
       <Box role="presentation">
+        <UserInfo />
         <List>
           {menuItems.map((item) => (
             <Link
@@ -78,7 +79,6 @@ export const MenuLateral = () => {
         </List>
       </Box>
       <Box>
-        <Divider />
         <List>
           <ListItem disablePadding>
             <ListItemButton onClick={authServices.logout}>
