@@ -7,6 +7,7 @@ import {
   PageLogin,
   PageNotFound,
   PageUsers,
+  TestPage,
 } from "../pages";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { GuestRoute } from "./GuestRoute";
@@ -42,8 +43,11 @@ export const AppRoutes = () => {
         <Route index element={<PageLogin />} />
       </Route>
 
+      <Route path="/teste" element={<TestPage />} />
+
+      <Route path="/nao-encontrado" element={<PageNotFound />} />
       <Route path="/acesso-negado" element={<PageAccessDenied />} />
-      <Route path="*" element={<PageNotFound />} />
+      <Route path="*" element={<Navigate to="/nao-encontrado" />} />
     </Routes>
   );
 };

@@ -9,3 +9,5 @@ export * from "./home/PageNotFound";
 export * from "./home/PageAccessDenied";
 
 export * from "./users/index/PageUsers";
+
+export * from "./TestPage";

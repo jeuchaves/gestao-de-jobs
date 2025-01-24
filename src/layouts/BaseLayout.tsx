@@ -3,7 +3,7 @@ import { MenuLateral } from "../components/menu-lateral/MenuLateral";
 import { FC, ReactNode } from "react";
 
 interface IBaseLayoutProps {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 export const BaseLayout: FC<IBaseLayoutProps> = ({ children }) => {

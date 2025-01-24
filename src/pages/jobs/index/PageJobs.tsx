@@ -200,6 +200,7 @@ export const PageJobs = () => {
 
   return (
     <BaseLayout>
+      {/* Título */}
       <Box
         sx={{
           display: "flex",
@@ -259,6 +260,7 @@ export const PageJobs = () => {
           ))}
         </Menu>
       </Box>
+      {/* Conteúdo */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -308,6 +310,7 @@ export const PageJobs = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      {/* Modais */}
       <DialogFinishJob
         open={openDialog}
         onClose={handleCloseDialogFinishJob}
