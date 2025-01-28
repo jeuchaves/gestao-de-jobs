@@ -14,6 +14,12 @@ import {
 } from "@mui/icons-material";
 
 import { BaseLayout } from "../layouts/BaseLayout";
+import {
+  StyledTable,
+  StyledTableCell,
+  StyledTableHead,
+  StyledTableRow,
+} from "../components/ui/styled-table";
 
 type DataRow = {
   id: string;
@@ -51,19 +57,14 @@ const data: DataRow[] = [
   },
 ];
 
-const StyledListItem = styled(Paper)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  padding: theme.spacing(1),
+const StyledListItem = styled(Box)(({ theme }) => ({
   paddingInline: theme.spacing(2),
   marginBlock: theme.spacing(1),
   borderRadius: "100px",
   backgroundColor: "#C6C6C6",
 }));
 
-const StyledHeadList = styled(Paper)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+const StyledHeadList = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1),
   paddingInline: theme.spacing(2),
   marginBlock: theme.spacing(1),
@@ -82,7 +83,7 @@ export const TestPage = () => {
       </Typography>
       <Box sx={{ my: 2, px: 2 }} component={Paper}>
         <List>
-          <StyledHeadList elevation={0}>
+          <StyledHeadList>
             <Grid2
               container
               spacing={2}
@@ -101,16 +102,16 @@ export const TestPage = () => {
               <Grid2 size={1}>
                 <Typography>Prazo</Typography>
               </Grid2>
-              <Grid2 size={2}>
+              <Grid2 size={3}>
                 <Typography>Responsável</Typography>
               </Grid2>
-              <Grid2 size={2}>
+              <Grid2 size={1}>
                 <Typography>Editar</Typography>
               </Grid2>
             </Grid2>
           </StyledHeadList>
           {data.map((row, index) => (
-            <StyledListItem key={row.id} elevation={0}>
+            <StyledListItem key={row.id}>
               <Grid2
                 container
                 spacing={2}
@@ -161,6 +162,20 @@ export const TestPage = () => {
           ))}
         </List>
       </Box>
+      <StyledTable>
+        <StyledTableHead>
+          <StyledTableCell size={2}>Testando</StyledTableCell>
+        </StyledTableHead>
+        <StyledTableRow>
+          <StyledTableCell size={2}>Testando</StyledTableCell>
+        </StyledTableRow>
+        <StyledTableRow>
+          <StyledTableCell size={2}>Testando</StyledTableCell>
+        </StyledTableRow>
+        <StyledTableRow>
+          <StyledTableCell size={2}>Testando</StyledTableCell>
+        </StyledTableRow>
+      </StyledTable>
     </BaseLayout>
   );
 };
