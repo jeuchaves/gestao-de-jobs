@@ -1,3 +1,6 @@
-import { Grid2 } from "@mui/material";
+import { Grid2, styled } from "@mui/material";
 
-export const StyledTableCell = Grid2;
+export const StyledTableCell = styled(Grid2)({
+  display: "flex",
+  alignItems: "center",
+});

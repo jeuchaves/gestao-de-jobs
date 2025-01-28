@@ -2,17 +2,9 @@ import { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  Chip,
   IconButton,
   Menu,
   MenuItem,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -41,6 +33,12 @@ import { DialogShowJob } from "./components/DialogShowJob";
 import { format } from "date-fns";
 import { IUser } from "../../../types/users";
 import { UserServices } from "../../../services/api/users/UserServices";
+import {
+  StyledTable,
+  StyledTableCell,
+  StyledTableHead,
+  StyledTableRow,
+} from "../../../components/ui/styled-table";
 
 export const PageJobs = () => {
   const [filter, setFilter] = useState<"all" | "completed">("all");
@@ -198,6 +196,24 @@ export const PageJobs = () => {
     </Box>
   );
 
+  const renderDueDate = (job: IJob) => {
+    const prazo = timeSinceDate(job.deadline);
+    return filter === "all" ? (
+      <Box
+        sx={{
+          color: prazo.isLate ? "error.main" : "success.main",
+        }}
+      >
+        {prazo.text}
+      </Box>
+    ) : (
+      <Box>
+        {format(new Date(job.updated_at), "dd/MM/yyyy") +
+          ` (${convertMinutesToHoursAndMinutes(job.timeSheet).hours}h${convertMinutesToHoursAndMinutes(job.timeSheet).minutes}m)`}
+      </Box>
+    );
+  };
+
   return (
     <BaseLayout>
       {/* Título */}
@@ -261,55 +277,30 @@ export const PageJobs = () => {
         </Menu>
       </Box>
       {/* Conteúdo */}
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>N° Doc</TableCell>
-              <TableCell>Nome</TableCell>
-              <TableCell>Projeto</TableCell>
-              <TableCell>{filter === "all" ? "Prazo" : "Conclusão"}</TableCell>
-              <TableCell>Responsável</TableCell>
-              <TableCell>Concluir</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {jobs.map((job) => {
-              const prazo = timeSinceDate(job.deadline);
-              return (
-                <TableRow key={job.id}>
-                  <TableCell>{job.nDoc}</TableCell>
-                  <TableCell>{job.title}</TableCell>
-                  <TableCell>{job.project}</TableCell>
-                  <TableCell>
-                    {filter === "all" ? (
-                      <Box
-                        sx={{
-                          color: prazo.isLate ? "error.main" : "success.main",
-                        }}
-                      >
-                        {prazo.text}
-                      </Box>
-                    ) : (
-                      <Box>
-                        {format(new Date(job.updated_at), "dd/MM/yyyy") +
-                          ` (${convertMinutesToHoursAndMinutes(job.timeSheet).hours}h${convertMinutesToHoursAndMinutes(job.timeSheet).minutes}m)`}
-                      </Box>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      icon={<PersonRounded />}
-                      label={job.responsibleName}
-                    />
-                  </TableCell>
-                  <TableCell>{renderActions(job)}</TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <StyledTable>
+        <StyledTableHead>
+          <StyledTableCell size={1}>N° Doc</StyledTableCell>
+          <StyledTableCell size={3}>Nome</StyledTableCell>
+          <StyledTableCell size={3}>Projeto</StyledTableCell>
+          <StyledTableCell size={2}>
+            {filter === "all" ? "Prazo" : "Conclusão"}
+          </StyledTableCell>
+          <StyledTableCell size={1}>Responsável</StyledTableCell>
+          <StyledTableCell size={2}>Editar</StyledTableCell>
+        </StyledTableHead>
+        {jobs.map((job) => {
+          return (
+            <StyledTableRow key={job.id}>
+              <StyledTableCell size={1}>{job.nDoc}</StyledTableCell>
+              <StyledTableCell size={3}>{job.title}</StyledTableCell>
+              <StyledTableCell size={3}>{job.project}</StyledTableCell>
+              <StyledTableCell size={2}>{renderDueDate(job)}</StyledTableCell>
+              <StyledTableCell size={1}>{job.responsibleName}</StyledTableCell>
+              <StyledTableCell size={2}>{renderActions(job)}</StyledTableCell>
+            </StyledTableRow>
+          );
+        })}
+      </StyledTable>
       {/* Modais */}
       <DialogFinishJob
         open={openDialog}

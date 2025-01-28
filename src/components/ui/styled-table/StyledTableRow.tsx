@@ -3,12 +3,10 @@ import { FC, ReactNode } from "react";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   paddingInline: theme.spacing(2),
+  paddingBlock: theme.spacing(1),
   marginBlock: theme.spacing(1),
   borderRadius: "100px",
   backgroundColor: "#C6C6C6",
-  minHeight: "40px",
-  display: "flex",
-  alignItems: "center",
 }));
 
 interface IStyledTableRowProps {
