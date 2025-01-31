@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  Avatar,
   Box,
   Button,
   IconButton,
@@ -9,13 +10,12 @@ import {
   Typography,
 } from "@mui/material";
 import {
-  DeleteRounded,
-  EditRounded,
+  DeleteOutlineRounded,
   ExpandCircleDownRounded,
-  LibraryAddCheckRounded,
+  ManageAccountsRounded,
   PersonRounded,
   PostAddRounded,
-  VisibilityRounded,
+  TaskAltOutlined,
 } from "@mui/icons-material";
 
 import { DialogAddJobs } from "../../../components/dialog-add-jobs/DialogAddJobs";
@@ -157,41 +157,55 @@ export const PageJobs = () => {
   };
 
   const renderActions = (job: IJob) => (
-    <Box
-      sx={{ display: "flex", gap: 1, flexWrap: "wrap", alignItems: "center" }}
-    >
-      <Tooltip title="Visualizar job" placement="top">
-        <IconButton size="small" onClick={() => handleOpenDialogShowJob(job)}>
-          <VisibilityRounded color="info" fontSize="small" />
-        </IconButton>
-      </Tooltip>
+    <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center" }}>
       {filter === "all" ? (
         <>
           <Tooltip title="Alterar responsável" placement="top">
-            <IconButton
-              size="small"
-              onClick={() => handleOpenDialogUpdateResponsible(job.id)}
+            <Avatar
+              sx={{
+                bgcolor: "primary.main",
+                color: "white",
+                borderRadius: 0,
+              }}
             >
-              <EditRounded color="warning" fontSize="small" />
-            </IconButton>
+              <IconButton
+                size="small"
+                onClick={() => handleOpenDialogUpdateResponsible(job.id)}
+                color="inherit"
+              >
+                <ManageAccountsRounded />
+              </IconButton>
+            </Avatar>
           </Tooltip>
           <Tooltip title="Finalizar job" placement="top">
-            <IconButton
-              onClick={() => handleOpenDialogFinishJob(job.id)}
-              size="small"
+            <Avatar
+              sx={{
+                bgcolor: "secondary.main",
+                color: "primary.main",
+                borderRadius: 0,
+              }}
             >
-              <LibraryAddCheckRounded color="success" fontSize="small" />
-            </IconButton>
+              <IconButton
+                onClick={() => handleOpenDialogFinishJob(job.id)}
+                size="small"
+                color="inherit"
+              >
+                <TaskAltOutlined />
+              </IconButton>
+            </Avatar>
           </Tooltip>
         </>
       ) : null}
       <Tooltip title="Excluir job" placement="top">
-        <IconButton
-          size="small"
-          onClick={() => handleOpenDialogDeleteJob(job.id)}
-        >
-          <DeleteRounded color="error" fontSize="small" />
-        </IconButton>
+        <Avatar sx={{ bgcolor: "error.main", color: "white", borderRadius: 0 }}>
+          <IconButton
+            size="small"
+            onClick={() => handleOpenDialogDeleteJob(job.id)}
+            color="inherit"
+          >
+            <DeleteOutlineRounded />
+          </IconButton>
+        </Avatar>
       </Tooltip>
     </Box>
   );
@@ -288,18 +302,18 @@ export const PageJobs = () => {
           <StyledTableCell size={1}>Responsável</StyledTableCell>
           <StyledTableCell size={2}>Editar</StyledTableCell>
         </StyledTableHead>
-        {jobs.map((job) => {
-          return (
-            <StyledTableRow key={job.id}>
-              <StyledTableCell size={1}>{job.nDoc}</StyledTableCell>
-              <StyledTableCell size={3}>{job.title}</StyledTableCell>
-              <StyledTableCell size={3}>{job.project}</StyledTableCell>
-              <StyledTableCell size={2}>{renderDueDate(job)}</StyledTableCell>
-              <StyledTableCell size={1}>{job.responsibleName}</StyledTableCell>
-              <StyledTableCell size={2}>{renderActions(job)}</StyledTableCell>
-            </StyledTableRow>
-          );
-        })}
+        {jobs.map((job) => (
+          <StyledTableRow key={job.id}>
+            <StyledTableCell size={1}>{job.nDoc}</StyledTableCell>
+            <StyledTableCell size={3}>{job.title}</StyledTableCell>
+            <StyledTableCell size={3}>{job.project}</StyledTableCell>
+            <StyledTableCell size={2}>{renderDueDate(job)}</StyledTableCell>
+            <StyledTableCell size={1}>{job.responsibleName}</StyledTableCell>
+            <StyledTableCell size={2} disablePadding justifyContent="flex-end">
+              {renderActions(job)}
+            </StyledTableCell>
+          </StyledTableRow>
+        ))}
       </StyledTable>
       {/* Modais */}
       <DialogFinishJob

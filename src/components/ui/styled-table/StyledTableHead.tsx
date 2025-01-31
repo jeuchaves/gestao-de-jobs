@@ -3,8 +3,6 @@ import { FC, ReactNode } from "react";
 
 const StyledHead = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1),
-  paddingInline: theme.spacing(2),
-  paddingBottom: theme.spacing(2),
   marginBlock: theme.spacing(1),
   borderBottom: "1px solid #000",
   borderRadius: 0,
