@@ -14,13 +14,25 @@ import { IJob } from "../../../types/jobs";
 import { ActDeleteJob } from "../dialogs/ActDeleteJob";
 import { ActCompleteJob } from "../dialogs/ActCompleteJob";
 import { ActUpdateResponsible } from "../dialogs/ActUpdateResponsible";
-import { useState } from "react";
+import React, { useState } from "react";
 import { DialogShowJob } from "../../../pages/jobs/index/components/DialogShowJob";
+import { timeSinceDate } from "../../../utils/dateUtils";
 
 interface IJobListProps {
   jobs: IJob[];
   onChange?: () => void;
 }
+
+export const ChipDueDate: React.FC<{ deadline: string }> = ({ deadline }) => {
+  const time = timeSinceDate(deadline);
+  return (
+    <Chip
+      label={time.text ?? "Sem prazo"}
+      size="small"
+      color={time.isLate ? "error" : "default"}
+    />
+  );
+};
 
 export const JobList: React.FC<IJobListProps> = ({ jobs, onChange }) => {
   const [openDialog, setOpenDialog] = useState(false);
@@ -53,7 +65,7 @@ export const JobList: React.FC<IJobListProps> = ({ jobs, onChange }) => {
             <ListItemText
               primary={
                 <Box>
-                  <Chip label="Vence hoje" size="small" />
+                  <ChipDueDate deadline={job.deadline} />
                   <Typography>
                     {job.nDoc} - {job.title}
                   </Typography>
