@@ -1,32 +1,15 @@
 import { useEffect, useState } from "react";
+import { Box, Button, Menu, MenuItem, Typography } from "@mui/material";
 import {
-  Avatar,
-  Box,
-  Button,
-  IconButton,
-  Menu,
-  MenuItem,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import {
-  DeleteOutlineRounded,
   ExpandCircleDownRounded,
-  ManageAccountsRounded,
   PersonRounded,
   PostAddRounded,
-  TaskAltOutlined,
 } from "@mui/icons-material";
 
 import { DialogAddJobs } from "../../../components/dialog-add-jobs/DialogAddJobs";
 import { JobsServices } from "../../../services/api/jobs/JobsServices";
-import {
-  convertMinutesToHoursAndMinutes,
-  timeSinceDate,
-} from "../../../utils/dateUtils";
 import { BaseLayout } from "../../../layouts/BaseLayout";
 import { IJob } from "../../../types/jobs";
-import { format } from "date-fns";
 import { IUser } from "../../../types/users";
 import { UserServices } from "../../../services/api/users/UserServices";
 import { JobDisplay } from "../../../components/job-display/JobDisplay";
@@ -62,18 +45,12 @@ export const PageJobs = () => {
     });
   };
 
-  // Mostrar job
-  const [selectedJobForShow, setSelectedJobForShow] = useState<IJob | null>(
-    null,
-  );
-  const [openDialogShowJob, setOpenDialogShowJob] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   const handleSelectUser = (id: number) => {
     setSelectedUserId(id);
     handleClose();
   };
-  // Fim mostrar job
 
   useEffect(() => {
     fetchJobs();
@@ -101,24 +78,6 @@ export const PageJobs = () => {
 
   const toggleFilter = () => {
     setFilter(filter === "all" ? "completed" : "all");
-  };
-
-  const renderDueDate = (job: IJob) => {
-    const prazo = timeSinceDate(job.deadline);
-    return filter === "all" ? (
-      <Box
-        sx={{
-          color: prazo.isLate ? "error.main" : "success.main",
-        }}
-      >
-        {prazo.text}
-      </Box>
-    ) : (
-      <Box>
-        {format(new Date(job.updated_at), "dd/MM/yyyy") +
-          ` (${convertMinutesToHoursAndMinutes(job.timeSheet).hours}h${convertMinutesToHoursAndMinutes(job.timeSheet).minutes}m)`}
-      </Box>
-    );
   };
 
   return (

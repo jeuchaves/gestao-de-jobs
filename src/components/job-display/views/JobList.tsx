@@ -16,15 +16,34 @@ import { ActCompleteJob } from "../dialogs/ActCompleteJob";
 import { ActUpdateResponsible } from "../dialogs/ActUpdateResponsible";
 import React, { useState } from "react";
 import { DialogShowJob } from "../../../pages/jobs/index/components/DialogShowJob";
-import { timeSinceDate } from "../../../utils/dateUtils";
+import {
+  convertMinutesToHoursAndMinutes,
+  timeSinceDate,
+} from "../../../utils/dateUtils";
+import { format } from "date-fns";
 
 interface IJobListProps {
   jobs: IJob[];
   onChange?: () => void;
 }
 
-export const ChipDueDate: React.FC<{ deadline: string }> = ({ deadline }) => {
-  const time = timeSinceDate(deadline);
+export const ChipDueDate: React.FC<{
+  job: IJob;
+}> = ({ job }) => {
+  const time = timeSinceDate(job.deadline);
+
+  if (job.timeSheet > 0) {
+    return (
+      <Chip
+        label={
+          format(new Date(job.updated_at), "dd/MM/yyyy") +
+          ` (${convertMinutesToHoursAndMinutes(job.timeSheet).hours}h${convertMinutesToHoursAndMinutes(job.timeSheet).minutes}m)`
+        }
+        size="small"
+      />
+    );
+  }
+
   return (
     <Chip
       label={time.text ?? "Sem prazo"}
@@ -65,7 +84,7 @@ export const JobList: React.FC<IJobListProps> = ({ jobs, onChange }) => {
             <ListItemText
               primary={
                 <Box>
-                  <ChipDueDate deadline={job.deadline} />
+                  <ChipDueDate job={job} />
                   <Typography>
                     {job.nDoc} - {job.title}
                   </Typography>
