@@ -21,11 +21,7 @@ import {
   timeSinceDate,
 } from "../../../utils/dateUtils";
 import { format } from "date-fns";
-
-interface IJobListProps {
-  jobs: IJob[];
-  onChange?: () => void;
-}
+import { IUser } from "../../../types/users";
 
 export const ChipDueDate: React.FC<{
   job: IJob;
@@ -53,7 +49,13 @@ export const ChipDueDate: React.FC<{
   );
 };
 
-export const JobList: React.FC<IJobListProps> = ({ jobs, onChange }) => {
+interface IJobListProps {
+  jobs: IJob[];
+  users: IUser[];
+  onChange?: () => void;
+}
+
+export const JobList: React.FC<IJobListProps> = ({ jobs, onChange, users }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedJob, setSelected] = useState<IJob | null>(null);
 
@@ -106,7 +108,11 @@ export const JobList: React.FC<IJobListProps> = ({ jobs, onChange }) => {
             <Box sx={{ display: "flex", gap: 1 }}>
               {job.timeSheet <= 0 && (
                 <>
-                  <ActUpdateResponsible job={job} onClose={onChange} />
+                  <ActUpdateResponsible
+                    job={job}
+                    onClose={onChange}
+                    users={users}
+                  />
                   <ActCompleteJob job={job} onClose={onChange} />
                 </>
               )}

@@ -3,21 +3,22 @@ import { IJob } from "../../../types/jobs";
 import { ManageAccountsRounded } from "@mui/icons-material";
 import { useState } from "react";
 import { DialogUpdateResponsible } from "../../../pages/jobs/index/components/DialogUpdateResponsible";
+import { IUser } from "../../../types/users";
 
 interface IActUpdateResponsibleProps {
   job: IJob;
   onClose?: () => void;
+  users: IUser[];
 }
 
 export const ActUpdateResponsible: React.FC<IActUpdateResponsibleProps> = ({
   job,
   onClose,
+  users,
 }) => {
   const [open, setOpen] = useState(false);
-  const [selectedJob, setSelectedJob] = useState<number | null>(null);
 
-  const handleOpen = (id: number) => {
-    setSelectedJob(id);
+  const handleOpen = () => {
     setOpen(true);
   };
 
@@ -40,7 +41,7 @@ export const ActUpdateResponsible: React.FC<IActUpdateResponsibleProps> = ({
             color="inherit"
             onClick={(e) => {
               e.stopPropagation();
-              handleOpen(job.id);
+              handleOpen();
             }}
           >
             <ManageAccountsRounded />
@@ -50,7 +51,8 @@ export const ActUpdateResponsible: React.FC<IActUpdateResponsibleProps> = ({
       <DialogUpdateResponsible
         open={open}
         onClose={handleClose}
-        id={selectedJob}
+        id={job.id}
+        users={users}
       />
     </>
   );

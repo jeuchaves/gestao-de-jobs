@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { JobsServices } from "../../../../services/api/jobs/JobsServices";
 import {
   Avatar,
@@ -10,7 +10,6 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-import { UserServices } from "../../../../services/api/users/UserServices";
 import { IUser } from "../../../../types/users";
 import { blue } from "@mui/material/colors";
 import { PersonRounded } from "@mui/icons-material";
@@ -19,25 +18,15 @@ interface IDialogUpdateResponsibleProps {
   id: number | null;
   open: boolean;
   onClose: (update: boolean) => void;
+  users: IUser[];
 }
 
 export const DialogUpdateResponsible: FC<IDialogUpdateResponsibleProps> = ({
   id,
   open,
   onClose,
+  users,
 }) => {
-  const [user, setUser] = useState<IUser[]>([]);
-
-  useEffect(() => {
-    UserServices.getAll({}).then((response) => {
-      if (response instanceof Error) {
-        console.error(response);
-        return;
-      }
-      setUser(response);
-    });
-  }, []);
-
   const handleUpdate = async (responsibleId: number) => {
     if (!id) {
       onClose(false);
@@ -57,7 +46,7 @@ export const DialogUpdateResponsible: FC<IDialogUpdateResponsibleProps> = ({
     <Dialog open={open} onClose={() => onClose(false)}>
       <DialogTitle>Alterar responsável</DialogTitle>
       <List sx={{ pt: 0 }}>
-        {user.map((user) => (
+        {users.map((user) => (
           <ListItem disablePadding key={user.id}>
             <ListItemButton onClick={() => handleUpdate(user.id)}>
               <ListItemAvatar>

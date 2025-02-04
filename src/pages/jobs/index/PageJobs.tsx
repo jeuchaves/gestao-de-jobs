@@ -45,6 +45,16 @@ export const PageJobs = () => {
     });
   };
 
+  const fetchUsers = () => {
+    UserServices.getAll({}).then((response) => {
+      if (response instanceof Error) {
+        console.error(response);
+        return;
+      }
+      setUsers(response);
+    });
+  };
+
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   const handleSelectUser = (id: number) => {
@@ -54,27 +64,15 @@ export const PageJobs = () => {
 
   useEffect(() => {
     fetchJobs();
-    UserServices.getAll({}).then((response) => {
-      if (response instanceof Error) {
-        console.error(response);
-        return;
-      }
-      setUsers(response);
-    });
+    fetchUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, selectedUserId]);
-
-  // Dialog de concluir job
 
   // Dialog de adicionar job
   const handleCloseDialogAddJob = (updated: boolean) => {
     setOpenDialogAddJob(false);
     if (updated) fetchJobs();
   };
-
-  // Dialog de deletar job
-
-  // Dialog de atualizar responsável do job
 
   const toggleFilter = () => {
     setFilter(filter === "all" ? "completed" : "all");
@@ -142,7 +140,7 @@ export const PageJobs = () => {
           ))}
         </Menu>
       </Box>
-      <JobDisplay jobs={jobs} view="list" onChange={fetchJobs} />
+      <JobDisplay jobs={jobs} view="list" onChange={fetchJobs} users={users} />
       <DialogAddJobs
         open={openDialogAddJob}
         onClose={handleCloseDialogAddJob}
