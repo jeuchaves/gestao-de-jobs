@@ -14,8 +14,7 @@ import { IJob } from "../../../types/jobs";
 import { ActDeleteJob } from "../dialogs/ActDeleteJob";
 import { ActCompleteJob } from "../dialogs/ActCompleteJob";
 import { ActUpdateResponsible } from "../dialogs/ActUpdateResponsible";
-import React, { useState } from "react";
-import { DialogShowJob } from "../../../pages/jobs/index/components/DialogShowJob";
+import React from "react";
 import {
   convertMinutesToHoursAndMinutes,
   timeSinceDate,
@@ -56,28 +55,11 @@ interface IJobListProps {
 }
 
 export const JobList: React.FC<IJobListProps> = ({ jobs, onChange, users }) => {
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectedJob, setSelected] = useState<IJob | null>(null);
-
-  const handleOpenDialog = (job: IJob) => {
-    setSelected(job);
-    setOpenDialog(true);
-  };
-  const handleCloseDialog = () => {
-    setSelected(null);
-    setOpenDialog(false);
-  };
-
   return (
     <>
       <List>
         {jobs.map((job) => (
-          <ListItem
-            component={Paper}
-            sx={{ my: 1, cursor: "pointer" }}
-            key={job.id}
-            onClick={() => handleOpenDialog(job)}
-          >
+          <ListItem component={Paper} sx={{ my: 1 }} key={job.id}>
             <ListItemAvatar>
               <Avatar alt={job.responsibleName}>
                 {job.responsibleName[0]}
@@ -121,11 +103,6 @@ export const JobList: React.FC<IJobListProps> = ({ jobs, onChange, users }) => {
           </ListItem>
         ))}
       </List>
-      <DialogShowJob
-        open={openDialog}
-        onClose={handleCloseDialog}
-        job={selectedJob}
-      />
     </>
   );
 };

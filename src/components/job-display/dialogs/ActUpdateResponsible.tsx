@@ -51,7 +51,7 @@ export const ActUpdateResponsible: React.FC<IActUpdateResponsibleProps> = ({
       <DialogUpdateResponsible
         open={open}
         onClose={handleClose}
-        id={job.id}
+        job={job}
         users={users}
       />
     </>
