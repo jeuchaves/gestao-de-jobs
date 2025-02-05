@@ -5,6 +5,7 @@ import {
   Button,
   CircularProgress,
   Container,
+  IconButton,
   keyframes,
   Paper,
   TextField,
@@ -17,7 +18,11 @@ import * as yup from "yup";
 import { authServices } from "../../../services/api/auth";
 
 import logo from "../../../assets/logos/rise_logo_estendida.svg";
-import { ArrowForwardRounded } from "@mui/icons-material";
+import {
+  ArrowForwardRounded,
+  VisibilityOffRounded,
+  VisibilityRounded,
+} from "@mui/icons-material";
 import { useState } from "react";
 
 type TLoginFormData = {
@@ -52,6 +57,7 @@ export const PageLogin = () => {
   const [shakeFields, setShakeFields] = useState(false);
   const [message, setMessage] = useState<string>();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     control,
@@ -130,6 +136,12 @@ export const PageLogin = () => {
                   label="E-mail"
                   error={!!errors.email}
                   helperText={errors.email?.message}
+                  variant="standard"
+                  slotProps={{
+                    inputLabel: {
+                      sx: { color: "text.primary" },
+                    },
+                  }}
                 />
               )}
             />
@@ -143,7 +155,27 @@ export const PageLogin = () => {
                   label="Senha"
                   error={!!errors.senha}
                   helperText={errors.senha?.message}
-                  type="password"
+                  type={showPassword ? "text" : "password"}
+                  variant="standard"
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <IconButton
+                          onClick={() => setShowPassword((prev) => !prev)}
+                          edge="end"
+                        >
+                          {showPassword ? (
+                            <VisibilityOffRounded />
+                          ) : (
+                            <VisibilityRounded />
+                          )}
+                        </IconButton>
+                      ),
+                    },
+                    inputLabel: {
+                      sx: { color: "text.primary" },
+                    },
+                  }}
                 />
               )}
             />
