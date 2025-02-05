@@ -1,16 +1,23 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
+  Alert,
   Box,
   Button,
   Container,
+  keyframes,
   Paper,
   TextField,
   Typography,
 } from "@mui/material";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import * as yup from "yup";
 import { useNavigate, useLocation } from "react-router-dom";
+import * as yup from "yup";
+
 import { authServices } from "../../../services/api/auth";
+
+import logo from "../../../assets/logos/rise_logo_estendida.svg";
+import { ArrowForwardRounded } from "@mui/icons-material";
+import { useState } from "react";
 
 type TLoginFormData = {
   email: string;
@@ -22,15 +29,32 @@ const loginSchema: yup.ObjectSchema<TLoginFormData> = yup.object({
   senha: yup.string().required(),
 });
 
+const initialValues: TLoginFormData = {
+  email: "",
+  senha: "",
+};
+
+const shake = keyframes`
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+`;
+
 export const PageLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const redirectPath =
     new URLSearchParams(location.search).get("redirect") || "/";
 
+  const [shakeFields, setShakeFields] = useState(false);
+  const [message, setMessage] = useState<string>();
+
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(loginSchema),
@@ -39,55 +63,110 @@ export const PageLogin = () => {
   const onSubmit: SubmitHandler<TLoginFormData> = (data) => {
     authServices.login(data.email, data.senha).then((response) => {
       if (response instanceof Error) {
-        console.error(response);
+        onError(response);
         return;
       }
       navigate(redirectPath);
     });
   };
 
+  const onError = (error: Error) => {
+    setMessage(error.message);
+    setShakeFields(true);
+    setTimeout(() => {
+      setShakeFields(false);
+    }, 500);
+    setTimeout(() => {
+      setMessage(undefined);
+    }, 5000);
+    reset(initialValues);
+  };
+
   return (
-    <Container sx={{ py: 4 }}>
-      <Typography variant="h3" gutterBottom>
-        Fazer login
-      </Typography>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Box
-          component={Paper}
-          sx={{ p: 4, display: "flex", flexDirection: "column", gap: 2 }}
-        >
-          <Controller
-            name="email"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="E-mail"
-                error={!!errors.email}
-                helperText={errors.email?.message}
-              />
-            )}
-          />
-          <Controller
-            name="senha"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Senha"
-                error={!!errors.senha}
-                helperText={errors.senha?.message}
-                type="password"
-              />
-            )}
-          />
-          <Button variant="contained" type="submit">
-            Entrar
-          </Button>
+    <Container sx={{ p: 4 }} maxWidth="sm">
+      <Box
+        component={Paper}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          overflow: "hidden",
+        }}
+      >
+        <Box sx={{ p: 4 }}>
+          <Typography variant="h2" textAlign="center">
+            Entra aí,{" "}
+            <Typography
+              variant="inherit"
+              component="span"
+              sx={{ fontWeight: 800 }}
+            >
+              criativo
+            </Typography>
+          </Typography>
         </Box>
-      </form>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              flexDirection: "column",
+              px: 4,
+              animation: shakeFields ? `${shake} 0.5s` : "none",
+            }}
+          >
+            {message && <Alert severity="error">{message}</Alert>}
+            <Controller
+              name="email"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="E-mail"
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
+                />
+              )}
+            />
+            <Controller
+              name="senha"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Senha"
+                  error={!!errors.senha}
+                  helperText={errors.senha?.message}
+                  type="password"
+                />
+              )}
+            />
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Button
+                variant="contained"
+                type="submit"
+                endIcon={<ArrowForwardRounded />}
+                size="large"
+                sx={{ textTransform: "none" }}
+              >
+                entrar
+              </Button>
+            </Box>
+          </Box>
+        </form>
+        <Box sx={{ p: 4, bgcolor: "primary.main" }}>
+          <Typography color="text.secondary" textAlign="center">
+            powered by{" "}
+            <img
+              src={logo}
+              alt="Rise Logo"
+              style={{ height: "20px", verticalAlign: "sub", marginLeft: 2 }}
+            />
+          </Typography>
+        </Box>
+      </Box>
     </Container>
   );
 };
