@@ -4,11 +4,8 @@ import {
   Button,
   Checkbox,
   Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   FormControlLabel,
+  Grid2,
   TextField,
   ToggleButton,
   ToggleButtonGroup,
@@ -87,120 +84,149 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={() => onClose(false)}>
-      <DialogTitle>Concluir job?</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Preencha as informações abaixo para concluir o job e bom trabalho!
-        </DialogContentText>
-        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-          <Box mt={2}>
-            <Typography>Complexidade estimada</Typography>
-            <Controller
-              name="estimatedComplexity"
-              control={control}
-              render={({ field }) => (
-                <ToggleButtonGroup
-                  {...field}
-                  exclusive
-                  fullWidth
-                  color="primary"
-                  onChange={(_, value) => field.onChange(value)}
-                  value={field.value}
-                >
-                  {complexityOptions.map((option) => (
-                    <ToggleButton key={option.value} value={option.value}>
-                      {option.label}
-                    </ToggleButton>
-                  ))}
-                </ToggleButtonGroup>
-              )}
-            />
-            {errors.estimatedComplexity && (
-              <Box color="error.main" mt={1}>
-                <Typography variant="caption">
-                  {errors.estimatedComplexity.message}
-                </Typography>
-              </Box>
+    <Dialog open={open} onClose={() => onClose(false)} maxWidth="xs" fullWidth>
+      <Box
+        sx={{
+          bgcolor: "secondary.main",
+          p: 4,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h3" textAlign="center">
+          Concluir Job
+        </Typography>
+        <Typography variant="caption" textAlign="center">
+          Preencha as informações abaixo para conclusão de job.
+        </Typography>
+      </Box>
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ p: 4 }}>
+        {/* Complexidade estimada */}
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Typography>Complexidade estimada</Typography>
+          <Controller
+            name="estimatedComplexity"
+            control={control}
+            render={({ field }) => (
+              <ToggleButtonGroup
+                {...field}
+                exclusive
+                fullWidth
+                color="primary"
+                onChange={(_, value) => field.onChange(value)}
+                value={field.value}
+              >
+                {complexityOptions.map((option) => (
+                  <ToggleButton key={option.value} value={option.value}>
+                    {option.label}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
             )}
-          </Box>
-          <Box mt={2}>
-            <Typography>Complexidade real</Typography>
-            <Controller
-              name="actualComplexity"
-              control={control}
-              render={({ field }) => (
-                <ToggleButtonGroup
-                  {...field}
-                  exclusive
-                  fullWidth
-                  color="primary"
-                  onChange={(_, value) => field.onChange(value)}
-                  value={field.value}
-                >
-                  {complexityOptions.map((option) => (
-                    <ToggleButton key={option.value} value={option.value}>
-                      {option.label}
-                    </ToggleButton>
-                  ))}
-                </ToggleButtonGroup>
-              )}
-            />
-            {errors.actualComplexity && (
-              <Box color="error.main" mt={1}>
-                <Typography variant="caption">
-                  {errors.actualComplexity.message}
-                </Typography>
-              </Box>
-            )}
-          </Box>
-          <Box mt={2}>
-            <Typography>Minutos trabalhados</Typography>
-            <TextField
-              {...register("timeSheet")}
-              type="number"
-              fullWidth
-              error={!!errors.timeSheet}
-              helperText={errors.timeSheet?.message}
-            />
-          </Box>
-          <Box mt={2}>
-            <FormControlLabel
-              control={
-                <Controller
-                  name="isChangeRequest"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox {...field} checked={field.value} />
-                  )}
-                />
-              }
-              label="Esse job é uma alteração"
-            />
-          </Box>
-          <Box mt={2}>
-            <Typography>Observações</Typography>
-            <TextField
-              {...register("contingencies")}
-              multiline
-              rows={4}
-              fullWidth
-              error={!!errors.contingencies}
-              helperText={errors.contingencies?.message}
-            />
-          </Box>
+          />
+          {errors.estimatedComplexity && (
+            <Box color="error.main" mt={1}>
+              <Typography variant="caption">
+                {errors.estimatedComplexity.message}
+              </Typography>
+            </Box>
+          )}
         </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => onClose(false)}>Cancelar</Button>
-        <Button
-          type="submit"
-          variant="contained"
-          onClick={handleSubmit(onSubmit)}
-        >
-          Finalizar
-        </Button>
-      </DialogActions>
+        {/* Complexidade real */}
+        <Box mt={2}>
+          <Typography>Complexidade real</Typography>
+          <Controller
+            name="actualComplexity"
+            control={control}
+            render={({ field }) => (
+              <ToggleButtonGroup
+                {...field}
+                exclusive
+                fullWidth
+                color="primary"
+                onChange={(_, value) => field.onChange(value)}
+                value={field.value}
+              >
+                {complexityOptions.map((option) => (
+                  <ToggleButton key={option.value} value={option.value}>
+                    {option.label}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            )}
+          />
+          {errors.actualComplexity && (
+            <Box color="error.main" mt={1}>
+              <Typography variant="caption">
+                {errors.actualComplexity.message}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+        {/* Minutos trabalhados */}
+        <Box mt={2}>
+          <Typography>Minutos trabalhados</Typography>
+          <TextField
+            {...register("timeSheet")}
+            type="number"
+            fullWidth
+            error={!!errors.timeSheet}
+            helperText={errors.timeSheet?.message}
+          />
+        </Box>
+        {/* Alteração */}
+        <Box mt={2}>
+          <FormControlLabel
+            control={
+              <Controller
+                name="isChangeRequest"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox {...field} checked={field.value} />
+                )}
+              />
+            }
+            label="Esse job é uma alteração"
+          />
+        </Box>
+        {/* Observações */}
+        <Box mt={2}>
+          <Typography>Observações</Typography>
+          <TextField
+            {...register("contingencies")}
+            multiline
+            rows={4}
+            fullWidth
+            error={!!errors.contingencies}
+            helperText={errors.contingencies?.message}
+          />
+        </Box>
+      </Box>
+      <Grid2 container spacing={2} sx={{ px: 4, pb: 4 }}>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="secondary"
+            disableElevation
+            onClick={handleSubmit(onSubmit)}
+          >
+            Salvar
+          </Button>
+        </Grid2>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="error"
+            disableElevation
+            onClick={() => onClose(false)}
+          >
+            Cancelar
+          </Button>
+        </Grid2>
+      </Grid2>
     </Dialog>
   );
 };

@@ -1,11 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
+import { Box, Button, Dialog, Grid2, Typography } from "@mui/material";
 import { FC } from "react";
 import { JobsServices } from "../../../../services/api/jobs/JobsServices";
 
@@ -35,19 +28,50 @@ export const DialogConfirmDelete: FC<IDialogConfirmDelete> = ({
     });
   };
   return (
-    <Dialog open={open} onClose={() => onClose(false)}>
-      <DialogTitle>Excluir job?</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Você está prestes a excluir um job. Deseja continuar?
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => onClose(false)}>Cancelar</Button>
-        <Button onClick={handleDelete} color="error">
-          Excluir
-        </Button>
-      </DialogActions>
+    <Dialog open={open} onClose={() => onClose(false)} maxWidth="xs" fullWidth>
+      <Box
+        sx={{
+          bgcolor: "error.main",
+          p: 4,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h3" textAlign="center" color="text.secondary">
+          Excluir Job
+        </Typography>
+      </Box>
+      <Box sx={{ p: 4, display: "flex", justifyContent: "center" }}>
+        <Typography textAlign="center">
+          Você está prestes a excluir um job da lista de tarefas, deseja
+          continuar?
+        </Typography>
+      </Box>
+      <Grid2 container spacing={2} sx={{ px: 4, pb: 4 }}>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="secondary"
+            disableElevation
+            onClick={() => onClose(false)}
+          >
+            Cancelar
+          </Button>
+        </Grid2>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="error"
+            disableElevation
+            onClick={handleDelete}
+          >
+            Excluir
+          </Button>
+        </Grid2>
+      </Grid2>
     </Dialog>
   );
 };
