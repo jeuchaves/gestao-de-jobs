@@ -10,6 +10,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Typography,
+  useTheme,
 } from "@mui/material";
 import React from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -47,10 +48,27 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
   onClose,
   jobId,
 }) => {
+  const theme = useTheme();
+
   const complexityOptions = [
-    { value: "simple", label: "Simples" },
-    { value: "regular", label: "Regular" },
-    { value: "complex", label: "Complexo" },
+    {
+      value: "simple",
+      label: "Simples",
+      color: theme.palette.text.primary,
+      bgcolor: theme.palette.secondary.main,
+    },
+    {
+      value: "regular",
+      label: "Regular",
+      color: theme.palette.common.white,
+      bgcolor: theme.palette.error.main,
+    },
+    {
+      value: "complex",
+      label: "Complexo",
+      color: theme.palette.common.white,
+      bgcolor: theme.palette.primary.main,
+    },
   ];
 
   const {
@@ -61,8 +79,8 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
   } = useForm<IFormValues>({
     resolver: yupResolver(dialogSchema),
     defaultValues: {
-      estimatedComplexity: "",
-      actualComplexity: "",
+      estimatedComplexity: "simple",
+      actualComplexity: "simple",
       contingencies: "",
       timeSheet: 0,
       isChangeRequest: false,
@@ -103,8 +121,8 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
       </Box>
       <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ p: 4 }}>
         {/* Complexidade estimada */}
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <Typography>Complexidade estimada</Typography>
+        <Box mt={2}>
+          <Typography gutterBottom>Complexidade estimada</Typography>
           <Controller
             name="estimatedComplexity"
             control={control}
@@ -116,9 +134,23 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
                 color="primary"
                 onChange={(_, value) => field.onChange(value)}
                 value={field.value}
+                sx={{
+                  borderRadius: "50px",
+                  overflow: "hidden",
+                }}
               >
                 {complexityOptions.map((option) => (
-                  <ToggleButton key={option.value} value={option.value}>
+                  <ToggleButton
+                    key={option.value}
+                    value={option.value}
+                    sx={{
+                      borderRadius: "50px",
+                      "&.Mui-selected": {
+                        backgroundColor: option.bgcolor,
+                        color: option.color,
+                      },
+                    }}
+                  >
                     {option.label}
                   </ToggleButton>
                 ))}
@@ -135,7 +167,7 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
         </Box>
         {/* Complexidade real */}
         <Box mt={2}>
-          <Typography>Complexidade real</Typography>
+          <Typography gutterBottom>Complexidade real</Typography>
           <Controller
             name="actualComplexity"
             control={control}
@@ -147,9 +179,23 @@ export const DialogFinishJob: React.FC<IDialogFinishJobProps> = ({
                 color="primary"
                 onChange={(_, value) => field.onChange(value)}
                 value={field.value}
+                sx={{
+                  borderRadius: "50px",
+                  overflow: "hidden",
+                }}
               >
                 {complexityOptions.map((option) => (
-                  <ToggleButton key={option.value} value={option.value}>
+                  <ToggleButton
+                    key={option.value}
+                    value={option.value}
+                    sx={{
+                      borderRadius: "50px",
+                      "&.Mui-selected": {
+                        backgroundColor: option.bgcolor,
+                        color: option.color,
+                      },
+                    }}
+                  >
                     {option.label}
                   </ToggleButton>
                 ))}
