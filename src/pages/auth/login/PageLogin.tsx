@@ -3,6 +3,7 @@ import {
   Alert,
   Box,
   Button,
+  CircularProgress,
   Container,
   keyframes,
   Paper,
@@ -50,6 +51,7 @@ export const PageLogin = () => {
 
   const [shakeFields, setShakeFields] = useState(false);
   const [message, setMessage] = useState<string>();
+  const [loading, setLoading] = useState(false);
 
   const {
     control,
@@ -61,7 +63,9 @@ export const PageLogin = () => {
   });
 
   const onSubmit: SubmitHandler<TLoginFormData> = (data) => {
+    setLoading(true);
     authServices.login(data.email, data.senha).then((response) => {
+      setLoading(false);
       if (response instanceof Error) {
         onError(response);
         return;
@@ -147,11 +151,18 @@ export const PageLogin = () => {
               <Button
                 variant="contained"
                 type="submit"
-                endIcon={<ArrowForwardRounded />}
+                endIcon={
+                  loading ? (
+                    <CircularProgress color="inherit" size="20px" />
+                  ) : (
+                    <ArrowForwardRounded />
+                  )
+                }
                 size="large"
                 sx={{ textTransform: "none" }}
+                disabled={loading}
               >
-                entrar
+                {loading ? "entrando..." : "entrar"}
               </Button>
             </Box>
           </Box>
