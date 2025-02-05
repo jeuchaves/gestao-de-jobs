@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { IUser } from "../../../types/users";
 import { Api } from "../axios-config";
 
@@ -26,7 +27,10 @@ export const login = async (
     }
     return new Error("Erro ao fazer login");
   } catch (error) {
-    console.error("Login falhou: ", error);
-    throw error;
+    const err = error as AxiosError;
+    if (err.response?.status === 401) {
+      return new Error("Usuário ou senha inválidos");
+    }
+    return new Error("Erro ao fazer login");
   }
 };

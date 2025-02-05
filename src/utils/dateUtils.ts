@@ -40,8 +40,14 @@ export const timeSinceDate = (
   }
 };
 
-export const convertMinutesToHoursAndMinutes = (minutes: number) => {
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-  return { hours, minutes: remainingMinutes };
+export const convertMinutesToHoursAndMinutes = (totalMinutes: number) => {
+  const isNegative = totalMinutes < 0;
+  const absMinutes = Math.abs(totalMinutes);
+  const hours = Math.floor(absMinutes / 60);
+  const minutes = absMinutes % 60;
+
+  return {
+    hours: isNegative ? -hours : hours,
+    minutes,
+  };
 };

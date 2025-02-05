@@ -1,75 +1,105 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { JobsServices } from "../../../../services/api/jobs/JobsServices";
-import {
-  Avatar,
-  Dialog,
-  DialogTitle,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemText,
-} from "@mui/material";
-import { UserServices } from "../../../../services/api/users/UserServices";
+import { Box, Button, Dialog, Grid2, Typography } from "@mui/material";
 import { IUser } from "../../../../types/users";
-import { blue } from "@mui/material/colors";
-import { PersonRounded } from "@mui/icons-material";
+import { IJob } from "../../../../types/jobs";
 
 interface IDialogUpdateResponsibleProps {
-  id: number | null;
+  job: IJob;
   open: boolean;
   onClose: (update: boolean) => void;
+  users: IUser[];
 }
 
 export const DialogUpdateResponsible: FC<IDialogUpdateResponsibleProps> = ({
-  id,
+  job,
   open,
   onClose,
+  users,
 }) => {
-  const [user, setUser] = useState<IUser[]>([]);
+  const [selectedResponsibleId, setSelectedResponsibleId] = useState<number>(
+    job.responsibleId,
+  );
 
-  useEffect(() => {
-    UserServices.getAll({}).then((response) => {
-      if (response instanceof Error) {
-        console.error(response);
-        return;
-      }
-      setUser(response);
-    });
-  }, []);
+  const handleSelectResponsible = (responsibleId: number) => {
+    setSelectedResponsibleId(responsibleId);
+  };
 
-  const handleUpdate = async (responsibleId: number) => {
-    if (!id) {
+  const handleSave = async () => {
+    if (!job) {
       onClose(false);
       return;
     }
 
-    JobsServices.updateResponsible(id, responsibleId).then((response) => {
-      if (response instanceof Error) {
-        console.error(response);
-        return;
-      }
-      onClose(true);
-    });
+    JobsServices.updateResponsible(job.id, selectedResponsibleId).then(
+      (response) => {
+        if (response instanceof Error) {
+          console.error(response);
+          return;
+        }
+        onClose(true);
+      },
+    );
   };
 
   return (
-    <Dialog open={open} onClose={() => onClose(false)}>
-      <DialogTitle>Alterar responsável</DialogTitle>
-      <List sx={{ pt: 0 }}>
-        {user.map((user) => (
-          <ListItem disablePadding key={user.id}>
-            <ListItemButton onClick={() => handleUpdate(user.id)}>
-              <ListItemAvatar>
-                <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
-                  <PersonRounded />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={user.nomeCompleto} />
-            </ListItemButton>
-          </ListItem>
+    <Dialog open={open} onClose={() => onClose(false)} maxWidth="xs" fullWidth>
+      <Box
+        sx={{
+          bgcolor: "primary.main",
+          p: 4,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h3" textAlign="center" color="text.secondary">
+          Alterar Responsável
+        </Typography>
+        <Typography variant="caption" textAlign="center" color="text.secondary">
+          Selecione o novo responsável pelo job escolhido
+        </Typography>
+      </Box>
+      <Box sx={{ p: 4 }}>
+        {users.map((user) => (
+          <Button
+            key={user.id}
+            fullWidth
+            size="large"
+            variant={
+              selectedResponsibleId === user.id ? "contained" : "outlined"
+            }
+            sx={{ my: 1 }}
+            onClick={() => handleSelectResponsible(user.id)}
+          >
+            {user.nomeCompleto}
+          </Button>
         ))}
-      </List>
+      </Box>
+      <Grid2 container spacing={2} sx={{ px: 4, pb: 4 }}>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="secondary"
+            disableElevation
+            onClick={handleSave}
+          >
+            Salvar
+          </Button>
+        </Grid2>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="error"
+            disableElevation
+            onClick={() => onClose(false)}
+          >
+            Cancelar
+          </Button>
+        </Grid2>
+      </Grid2>
     </Dialog>
   );
 };

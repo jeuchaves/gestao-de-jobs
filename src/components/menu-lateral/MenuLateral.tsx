@@ -1,38 +1,42 @@
 import {
-  AddCircleRounded,
-  DashboardRounded,
+  CrisisAlertRounded,
+  GridViewRounded,
+  GroupRounded,
   LogoutRounded,
-  PersonRounded,
-  WorkRounded,
+  PostAddRounded,
 } from "@mui/icons-material";
 import {
   Box,
-  Divider,
+  Button,
   Drawer,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
 import { authServices } from "../../services/api/auth";
+import { UserInfo } from "./components/UserInfo";
 
 const menuItems = [
-  { label: "Dashboard", path: "/dashboard", icon: <DashboardRounded /> },
-  { label: "Jobs", path: "/jobs", icon: <WorkRounded /> },
-  {
-    label: "Adicionar jobs",
-    path: "/jobs/adicionar",
-    icon: <AddCircleRounded />,
-  },
-  { label: "Usuários", path: "/usuarios", icon: <PersonRounded /> },
+  { label: "Dashboard", path: "/dashboard", icon: <GridViewRounded /> },
+  { label: "Jobs", path: "/jobs", icon: <CrisisAlertRounded /> },
+  { label: "Usuários", path: "/usuarios", icon: <GroupRounded /> },
 ];
 
 const drawerWidth = 240;
 
 export const MenuLateral = () => {
   const location = useLocation();
+  const theme = useTheme();
+  const smDown = useMediaQuery(theme.breakpoints.down("sm"));
+
+  if (smDown) {
+    return null;
+  }
 
   return (
     <Drawer
@@ -52,6 +56,22 @@ export const MenuLateral = () => {
       }}
     >
       <Box role="presentation">
+        <UserInfo />
+        <Box sx={{ p: 2 }}>
+          <Link to="/jobs/adicionar" style={{ textDecoration: "none" }}>
+            <Button
+              variant="contained"
+              color="secondary"
+              disableElevation
+              startIcon={<PostAddRounded />}
+              sx={{ color: "primary.light" }}
+              size="large"
+              fullWidth
+            >
+              Adicionar jobs
+            </Button>
+          </Link>
+        </Box>
         <List>
           {menuItems.map((item) => (
             <Link
@@ -60,7 +80,30 @@ export const MenuLateral = () => {
               style={{ textDecoration: "none", color: "inherit" }}
             >
               <ListItem disablePadding>
-                <ListItemButton selected={location.pathname === item.path}>
+                <ListItemButton
+                  selected={location.pathname === item.path}
+                  sx={{
+                    position: "relative",
+                    "&.Mui-selected": {
+                      backgroundColor: "transparent",
+                      color: "primary.dark",
+                      "&::after": {
+                        content: '""',
+                        position: "absolute",
+                        top: "50%",
+                        right: 0,
+                        transform: "translateY(-50%)",
+                        width: "8px",
+                        height: "100%",
+                        backgroundColor: "primary.main",
+                        borderRadius: "4px 0 0 4px",
+                      },
+                    },
+                    "&.Mui-selected .MuiListItemIcon-root": {
+                      color: "primary.dark",
+                    },
+                  }}
+                >
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.label} />
                 </ListItemButton>
@@ -70,7 +113,6 @@ export const MenuLateral = () => {
         </List>
       </Box>
       <Box>
-        <Divider />
         <List>
           <ListItem disablePadding>
             <ListItemButton onClick={authServices.logout}>
