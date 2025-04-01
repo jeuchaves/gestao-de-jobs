@@ -9,7 +9,6 @@ interface IAnalyticsProps {
 
 export type TGetTotalJobs = {
   total: number;
-  comparison: number;
 };
 
 export type TGetJobsAverageTime = {
@@ -35,14 +34,9 @@ interface IUserJobsStats {
   totalCompletedJobs: number;
 }
 
-const getTotalJobs = async ({
-  startDate,
-  endDate,
-  startDateComparison,
-  endDateComparison,
-}: IAnalyticsProps): Promise<TGetTotalJobs | Error> => {
+const getRemainingJobs = async (): Promise<TGetTotalJobs | Error> => {
   try {
-    const urlRelativa = `/analytics/jobs-comparison?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}`;
+    const urlRelativa = "/analytics/remaining-jobs";
     const { data } = await Api.get<TGetTotalJobs>(urlRelativa);
     return data ? data : new Error("Erro ao buscar os registros");
   } catch (error) {
@@ -126,7 +120,7 @@ const getUsersJobsStats = async ({
 };
 
 export const AnalyticsService = {
-  getTotalJobs,
+  getRemainingJobs,
   getJobsAverageTime,
   getJobsChangePercentage,
   getUsersJobsStats,

@@ -73,7 +73,7 @@ const FullWidthChip: FC<IFullWidthChipProps> = ({ leftText, rightText }) => {
 export const GeneralInfo = () => {
   const theme = useTheme();
 
-  const [totalJobs, setTotalJobs] = useState<TGetTotalJobs>();
+  const [remainingJobs, setRemainingJobs] = useState<TGetTotalJobs>();
   const [totalCompletedJobs, setTotalCompletedJobs] = useState<TGetTotalJobs>();
   const [averageTime, setAverageTime] = useState<TGetJobsAverageTime>();
   const [changePercent, setChangePercent] = useState<TJobsChangePercentage>();
@@ -109,7 +109,7 @@ export const GeneralInfo = () => {
     setError(null);
 
     Promise.all([
-      AnalyticsService.getTotalJobs({ ...period, ...comparisonPeriod }),
+      AnalyticsService.getRemainingJobs(),
       AnalyticsService.getJobsAverageTime({ ...period, ...comparisonPeriod }),
       AnalyticsService.getJobsChangePercentage({
         ...period,
@@ -132,7 +132,7 @@ export const GeneralInfo = () => {
           if (changePercentageData instanceof Error) throw changePercentageData;
           if (completedJobsData instanceof Error) throw completedJobsData;
 
-          setTotalJobs(totalJobsData);
+          setRemainingJobs(totalJobsData);
           setTotalCompletedJobs(completedJobsData);
           setAverageTime(averageTimeData);
           setChangePercent(changePercentageData);
@@ -205,22 +205,17 @@ export const GeneralInfo = () => {
           <Box component={Paper} sx={{ height: "100%" }}>
             <Box sx={{ px: 4, py: 2 }}>
               <Typography variant="h3">Jobs restantes</Typography>
-              <NumberText value={totalJobs?.total ?? 0}>
-                {loading || !totalJobs ? <Skeleton /> : totalJobs.total}
+              <NumberText value={remainingJobs?.total ?? 0}>
+                {loading || !remainingJobs ? <Skeleton /> : remainingJobs.total}
               </NumberText>
-              {!loading && totalJobs && (
+              {!loading && remainingJobs && (
                 <FullWidthChip
                   leftText="média time"
-                  rightText={`${totalJobs.total}`}
+                  rightText={`${remainingJobs.total}`}
                 />
               )}
             </Box>
             <Divider />
-            <ComparisonInfo
-              comparison={totalJobs?.comparison}
-              current={totalJobs?.total}
-              isLoading={loading}
-            />
           </Box>
         </Grid2>
         {/* Tempo médio */}
