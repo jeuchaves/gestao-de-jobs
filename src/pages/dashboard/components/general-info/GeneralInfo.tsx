@@ -13,6 +13,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { KeyboardArrowDown } from "@mui/icons-material";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 import {
   AnalyticsService,
@@ -26,6 +27,7 @@ import {
   TPeriodOption,
   usePeriodSelection,
 } from "../../../../hooks/usePeriodSelection";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
 interface INumberTextProps {
   value?: number;
@@ -82,6 +84,11 @@ export const GeneralInfo: React.FC<IGeneralInfoProps> = ({ responsibleId }) => {
   const [averageTime, setAverageTime] = useState<TGetJobsAverageTime>();
   const [changePercent, setChangePercent] = useState<TJobsChangePercentage>();
 
+  // TO DO - Refactor this to use a single function
+  const [customStartDate, setCustomStartDate] = useState<Date | null>(null);
+  const [customEndDate, setCustomEndDate] = useState<Date | null>(null);
+  const [showCustomPicker, setShowCustomPicker] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -103,8 +110,25 @@ export const GeneralInfo: React.FC<IGeneralInfoProps> = ({ responsibleId }) => {
     setPeriodAnchorEl(null);
   };
   const handleSelectPeriod = (selectedPeriod: TPeriodOption) => {
+    // TO DO - Refactor this to use a single function
+    if (selectedPeriod === "custom") {
+      setShowCustomPicker(true);
+      return;
+    }
     selectPeriod(selectedPeriod);
     handleClosePeriodMenu();
+  };
+
+  // TO DO - Refactor this to use a single function
+  const handleApplyCustomPeriod = () => {
+    if (customStartDate && customEndDate) {
+      selectPeriod("custom", {
+        start: customStartDate,
+        end: customEndDate,
+      });
+      setShowCustomPicker(false);
+      handleClosePeriodMenu();
+    }
   };
   // FIM MENU PERÍODO
 
@@ -207,6 +231,31 @@ export const GeneralInfo: React.FC<IGeneralInfoProps> = ({ responsibleId }) => {
               </MenuItem>
             ))}
           </Menu>
+          {showCustomPicker && (
+            <Paper sx={{ p: 2, position: "absolute", zIndex: 1, mt: 1 }}>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <Box display="flex" gap={2} alignItems="center">
+                  <DatePicker
+                    label="Data Inicial"
+                    value={customStartDate}
+                    onChange={(newValue) => setCustomStartDate(newValue)}
+                  />
+                  <DatePicker
+                    label="Data Final"
+                    value={customEndDate}
+                    onChange={(newValue) => setCustomEndDate(newValue)}
+                  />
+                  <Button
+                    variant="contained"
+                    onClick={handleApplyCustomPeriod}
+                    disabled={!customStartDate || !customEndDate}
+                  >
+                    Aplicar
+                  </Button>
+                </Box>
+              </LocalizationProvider>
+            </Paper>
+          )}
         </Box>
       </Box>
       <Grid2 container spacing={2} mt={2}>
