@@ -1,15 +1,10 @@
 import { Api } from "../axios-config";
 
-interface IAnalyticsProps {
-  startDate: string;
-  endDate: string;
-  startDateComparison: string;
-  endDateComparison: string;
-}
-
+/**
+ * Tipos e Interfaces
+ */
 export type TGetTotalJobs = {
   total: number;
-  comparison: number;
 };
 
 export type TGetJobsAverageTime = {
@@ -35,14 +30,25 @@ interface IUserJobsStats {
   totalCompletedJobs: number;
 }
 
-const getTotalJobs = async ({
-  startDate,
-  endDate,
-  startDateComparison,
-  endDateComparison,
-}: IAnalyticsProps): Promise<TGetTotalJobs | Error> => {
+interface IAnalyticsDateRange {
+  startDate: string;
+  endDate: string;
+}
+
+export interface IAnalyticsComparisonDateRange extends IAnalyticsDateRange {
+  startDateComparison: string;
+  endDateComparison: string;
+}
+
+interface IFilterByResponsible {
+  responsibleId?: number;
+}
+
+const getRemainingJobs = async ({
+  responsibleId,
+}: IFilterByResponsible): Promise<TGetTotalJobs | Error> => {
   try {
-    const urlRelativa = `/analytics/jobs-comparison?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}`;
+    const urlRelativa = `/analytics/remaining-jobs?${responsibleId ? `responsibleId=${responsibleId}` : ""}`;
     const { data } = await Api.get<TGetTotalJobs>(urlRelativa);
     return data ? data : new Error("Erro ao buscar os registros");
   } catch (error) {
@@ -58,9 +64,12 @@ const getTotalCompletedJobs = async ({
   endDate,
   startDateComparison,
   endDateComparison,
-}: IAnalyticsProps): Promise<TGetTotalJobs | Error> => {
+  responsibleId,
+}: IAnalyticsComparisonDateRange & IFilterByResponsible): Promise<
+  TGetTotalJobs | Error
+> => {
   try {
-    const urlRelativa = `/analytics/completed-jobs?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}`;
+    const urlRelativa = `/analytics/completed-jobs?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}&${responsibleId ? `responsibleId=${responsibleId}` : ""}`;
     const { data } = await Api.get<TGetTotalJobs>(urlRelativa);
     return data ? data : new Error("Erro ao buscar os registros");
   } catch (error) {
@@ -76,9 +85,12 @@ const getJobsAverageTime = async ({
   endDate,
   startDateComparison,
   endDateComparison,
-}: IAnalyticsProps): Promise<TGetJobsAverageTime | Error> => {
+  responsibleId,
+}: IAnalyticsComparisonDateRange & IFilterByResponsible): Promise<
+  TGetJobsAverageTime | Error
+> => {
   try {
-    const urlRelativa = `/analytics/jobs-average-time?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}`;
+    const urlRelativa = `/analytics/jobs-average-time?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}&${responsibleId ? `responsibleId=${responsibleId}` : ""}`;
     const { data } = await Api.get<TGetJobsAverageTime>(urlRelativa);
     return data ? data : new Error("Erro ao buscar os registros");
   } catch (error) {
@@ -94,9 +106,12 @@ const getJobsChangePercentage = async ({
   endDate,
   startDateComparison,
   endDateComparison,
-}: IAnalyticsProps): Promise<TJobsChangePercentage | Error> => {
+  responsibleId,
+}: IAnalyticsComparisonDateRange & IFilterByResponsible): Promise<
+  TJobsChangePercentage | Error
+> => {
   try {
-    const urlRelativa = `/analytics/jobs-change-percentage?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}`;
+    const urlRelativa = `/analytics/jobs-change-percentage?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}&${responsibleId ? `responsibleId=${responsibleId}` : ""}`;
     const { data } = await Api.get<TJobsChangePercentage>(urlRelativa);
     return data ? data : new Error("Erro ao buscar os registros");
   } catch (error) {
@@ -110,11 +125,12 @@ const getJobsChangePercentage = async ({
 const getUsersJobsStats = async ({
   startDate,
   endDate,
-}: Omit<IAnalyticsProps, "startDateComparison" | "endDateComparison">): Promise<
+  responsibleId,
+}: IAnalyticsDateRange & IFilterByResponsible): Promise<
   IUserJobsStats | Error
 > => {
   try {
-    const urlRelativa = `/analytics/user-jobs-stats?startDate=${startDate}&endDate=${endDate}`;
+    const urlRelativa = `/analytics/user-jobs-stats?startDate=${startDate}&endDate=${endDate}&${responsibleId ? `responsibleId=${responsibleId}` : ""}`;
     const { data } = await Api.get<IUserJobsStats>(urlRelativa);
     return data ? data : new Error("Erro ao buscar os registros");
   } catch (error) {
@@ -126,7 +142,7 @@ const getUsersJobsStats = async ({
 };
 
 export const AnalyticsService = {
-  getTotalJobs,
+  getRemainingJobs,
   getJobsAverageTime,
   getJobsChangePercentage,
   getUsersJobsStats,

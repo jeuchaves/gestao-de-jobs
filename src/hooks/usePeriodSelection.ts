@@ -6,7 +6,8 @@ export type TPeriodOption =
   | "yesterday"
   | "last7days"
   | "last28days"
-  | "previousPeriod";
+  | "previousPeriod"
+  | "custom";
 
 interface IFilterData {
   startDate: string;
@@ -40,8 +41,42 @@ export const usePeriodSelection = () => {
   const [keyComparisonPeriod, setKeyComparisonPeriod] =
     useState<TPeriodOption>("yesterday");
 
-  const selectPeriod = (selectedPeriod: TPeriodOption) => {
+  const selectPeriod = (
+    selectedPeriod: TPeriodOption,
+    customDate?: { start: Date; end: Date },
+  ) => {
     let newPeriod;
+
+    // TO DO - Refactor this to use a single function
+    if (selectedPeriod === "custom" && customDate) {
+      const start = customDate.start;
+      const end = customDate.end;
+
+      // Calcula a diferença em dias entre start e end
+      const diffDays = Math.ceil(
+        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
+      );
+
+      setPeriod({
+        startDate: startOfDay(customDate.start).toISOString().split("T")[0],
+        endDate: startOfDay(customDate.end).toISOString().split("T")[0],
+      });
+
+      // Gera o período de comparação com a mesma duração, imediatamente anterior
+      setComparisonPeriod({
+        startDateComparison: startOfDay(subDays(start, diffDays + 1))
+          .toISOString()
+          .split("T")[0],
+        endDateComparison: startOfDay(subDays(start, 1))
+          .toISOString()
+          .split("T")[0],
+      });
+
+      setKeyPeriod("custom");
+      setKeyComparisonPeriod("previousPeriod");
+      return;
+    }
+
     switch (selectedPeriod) {
       case "last28days":
         newPeriod = {
@@ -144,6 +179,7 @@ export const usePeriodSelection = () => {
     { label: "Ontem", value: "yesterday" },
     { label: "Últimos 7 dias", value: "last7days" },
     { label: "Últimos 28 dias", value: "last28days" },
+    { label: "Personalizado", value: "custom" },
   ];
 
   const comparisonPeriodOptions: { label: string; value: TPeriodOption }[] = [
