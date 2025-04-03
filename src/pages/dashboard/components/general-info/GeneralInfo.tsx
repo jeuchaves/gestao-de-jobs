@@ -287,7 +287,7 @@ export const GeneralInfo = () => {
           >
             <Box sx={{ px: 4, py: 2 }}>
               <Typography variant="h3" sx={{ color: "text.secondary" }}>
-                Total de Jobs
+                Jobs Concluídos
               </Typography>
               <NumberText aboveValueColor={theme.palette.text.secondary}>
                 {loading || !totalCompletedJobs ? (
