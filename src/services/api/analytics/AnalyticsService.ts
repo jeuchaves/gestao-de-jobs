@@ -1,12 +1,8 @@
 import { Api } from "../axios-config";
 
-interface IAnalyticsProps {
-  startDate: string;
-  endDate: string;
-  startDateComparison: string;
-  endDateComparison: string;
-}
-
+/**
+ * Tipos e Interfaces
+ */
 export type TGetTotalJobs = {
   total: number;
 };
@@ -34,6 +30,16 @@ interface IUserJobsStats {
   totalCompletedJobs: number;
 }
 
+interface IAnalyticsDateRange {
+  startDate: string;
+  endDate: string;
+}
+
+export interface IAnalyticsComparisonDateRange extends IAnalyticsDateRange {
+  startDateComparison: string;
+  endDateComparison: string;
+}
+
 const getRemainingJobs = async (): Promise<TGetTotalJobs | Error> => {
   try {
     const urlRelativa = "/analytics/remaining-jobs";
@@ -52,7 +58,7 @@ const getTotalCompletedJobs = async ({
   endDate,
   startDateComparison,
   endDateComparison,
-}: IAnalyticsProps): Promise<TGetTotalJobs | Error> => {
+}: IAnalyticsComparisonDateRange): Promise<TGetTotalJobs | Error> => {
   try {
     const urlRelativa = `/analytics/completed-jobs?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}`;
     const { data } = await Api.get<TGetTotalJobs>(urlRelativa);
@@ -70,7 +76,7 @@ const getJobsAverageTime = async ({
   endDate,
   startDateComparison,
   endDateComparison,
-}: IAnalyticsProps): Promise<TGetJobsAverageTime | Error> => {
+}: IAnalyticsComparisonDateRange): Promise<TGetJobsAverageTime | Error> => {
   try {
     const urlRelativa = `/analytics/jobs-average-time?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}`;
     const { data } = await Api.get<TGetJobsAverageTime>(urlRelativa);
@@ -88,7 +94,7 @@ const getJobsChangePercentage = async ({
   endDate,
   startDateComparison,
   endDateComparison,
-}: IAnalyticsProps): Promise<TJobsChangePercentage | Error> => {
+}: IAnalyticsComparisonDateRange): Promise<TJobsChangePercentage | Error> => {
   try {
     const urlRelativa = `/analytics/jobs-change-percentage?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}`;
     const { data } = await Api.get<TJobsChangePercentage>(urlRelativa);
@@ -104,9 +110,7 @@ const getJobsChangePercentage = async ({
 const getUsersJobsStats = async ({
   startDate,
   endDate,
-}: Omit<IAnalyticsProps, "startDateComparison" | "endDateComparison">): Promise<
-  IUserJobsStats | Error
-> => {
+}: IAnalyticsDateRange): Promise<IUserJobsStats | Error> => {
   try {
     const urlRelativa = `/analytics/user-jobs-stats?startDate=${startDate}&endDate=${endDate}`;
     const { data } = await Api.get<IUserJobsStats>(urlRelativa);
