@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import {
   Box,
   Button,
+  Dialog,
   Divider,
   Grid2,
   Menu,
@@ -231,31 +232,35 @@ export const GeneralInfo: React.FC<IGeneralInfoProps> = ({ responsibleId }) => {
               </MenuItem>
             ))}
           </Menu>
-          {showCustomPicker && (
-            <Paper sx={{ p: 2, position: "absolute", zIndex: 1, mt: 1 }}>
+
+          <Dialog
+            open={showCustomPicker}
+            onClose={() => setShowCustomPicker(false)}
+          >
+            <Box
+              sx={{ p: 4, display: "flex", flexDirection: "column", gap: 2 }}
+            >
               <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <Box display="flex" gap={2} alignItems="center">
-                  <DatePicker
-                    label="Data Inicial"
-                    value={customStartDate}
-                    onChange={(newValue) => setCustomStartDate(newValue)}
-                  />
-                  <DatePicker
-                    label="Data Final"
-                    value={customEndDate}
-                    onChange={(newValue) => setCustomEndDate(newValue)}
-                  />
-                  <Button
-                    variant="contained"
-                    onClick={handleApplyCustomPeriod}
-                    disabled={!customStartDate || !customEndDate}
-                  >
-                    Aplicar
-                  </Button>
-                </Box>
+                <DatePicker
+                  label="Data Inicial"
+                  value={customStartDate}
+                  onChange={(newValue) => setCustomStartDate(newValue)}
+                />
+                <DatePicker
+                  label="Data Final"
+                  value={customEndDate}
+                  onChange={(newValue) => setCustomEndDate(newValue)}
+                />
+                <Button
+                  variant="contained"
+                  onClick={handleApplyCustomPeriod}
+                  disabled={!customStartDate || !customEndDate}
+                >
+                  Aplicar
+                </Button>
               </LocalizationProvider>
-            </Paper>
-          )}
+            </Box>
+          </Dialog>
         </Box>
       </Box>
       <Grid2 container spacing={2} mt={2}>
