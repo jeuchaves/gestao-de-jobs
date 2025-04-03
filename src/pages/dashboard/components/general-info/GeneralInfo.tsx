@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -70,7 +70,11 @@ const FullWidthChip: FC<IFullWidthChipProps> = ({ leftText, rightText }) => {
   );
 };
 
-export const GeneralInfo = () => {
+interface IGeneralInfoProps {
+  responsibleId?: number;
+}
+
+export const GeneralInfo: React.FC<IGeneralInfoProps> = ({ responsibleId }) => {
   const theme = useTheme();
 
   const [remainingJobs, setRemainingJobs] = useState<TGetTotalJobs>();
@@ -109,15 +113,21 @@ export const GeneralInfo = () => {
     setError(null);
 
     Promise.all([
-      AnalyticsService.getRemainingJobs({}),
-      AnalyticsService.getJobsAverageTime({ ...period, ...comparisonPeriod }),
+      AnalyticsService.getRemainingJobs({ responsibleId }),
+      AnalyticsService.getJobsAverageTime({
+        ...period,
+        ...comparisonPeriod,
+        responsibleId,
+      }),
       AnalyticsService.getJobsChangePercentage({
         ...period,
         ...comparisonPeriod,
+        responsibleId,
       }),
       AnalyticsService.getTotalCompletedJobs({
         ...period,
         ...comparisonPeriod,
+        responsibleId,
       }),
     ])
       .then(
@@ -143,7 +153,7 @@ export const GeneralInfo = () => {
         setError("Erro ao carregar os dados de análise.");
       })
       .finally(() => setLoading(false));
-  }, [period, comparisonPeriod]);
+  }, [period, comparisonPeriod, responsibleId]);
 
   if (error) {
     return <Typography>{error}</Typography>;
