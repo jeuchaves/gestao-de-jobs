@@ -40,9 +40,15 @@ export interface IAnalyticsComparisonDateRange extends IAnalyticsDateRange {
   endDateComparison: string;
 }
 
-const getRemainingJobs = async (): Promise<TGetTotalJobs | Error> => {
+interface IFilterByResponsible {
+  responsibleId?: number;
+}
+
+const getRemainingJobs = async ({
+  responsibleId,
+}: IFilterByResponsible): Promise<TGetTotalJobs | Error> => {
   try {
-    const urlRelativa = "/analytics/remaining-jobs";
+    const urlRelativa = `/analytics/remaining-jobs?${responsibleId ? `responsibleId=${responsibleId}` : ""}`;
     const { data } = await Api.get<TGetTotalJobs>(urlRelativa);
     return data ? data : new Error("Erro ao buscar os registros");
   } catch (error) {
@@ -58,9 +64,12 @@ const getTotalCompletedJobs = async ({
   endDate,
   startDateComparison,
   endDateComparison,
-}: IAnalyticsComparisonDateRange): Promise<TGetTotalJobs | Error> => {
+  responsibleId,
+}: IAnalyticsComparisonDateRange & IFilterByResponsible): Promise<
+  TGetTotalJobs | Error
+> => {
   try {
-    const urlRelativa = `/analytics/completed-jobs?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}`;
+    const urlRelativa = `/analytics/completed-jobs?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}&${responsibleId ? `responsibleId=${responsibleId}` : ""}`;
     const { data } = await Api.get<TGetTotalJobs>(urlRelativa);
     return data ? data : new Error("Erro ao buscar os registros");
   } catch (error) {
@@ -76,9 +85,12 @@ const getJobsAverageTime = async ({
   endDate,
   startDateComparison,
   endDateComparison,
-}: IAnalyticsComparisonDateRange): Promise<TGetJobsAverageTime | Error> => {
+  responsibleId,
+}: IAnalyticsComparisonDateRange & IFilterByResponsible): Promise<
+  TGetJobsAverageTime | Error
+> => {
   try {
-    const urlRelativa = `/analytics/jobs-average-time?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}`;
+    const urlRelativa = `/analytics/jobs-average-time?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}&${responsibleId ? `responsibleId=${responsibleId}` : ""}`;
     const { data } = await Api.get<TGetJobsAverageTime>(urlRelativa);
     return data ? data : new Error("Erro ao buscar os registros");
   } catch (error) {
@@ -94,9 +106,12 @@ const getJobsChangePercentage = async ({
   endDate,
   startDateComparison,
   endDateComparison,
-}: IAnalyticsComparisonDateRange): Promise<TJobsChangePercentage | Error> => {
+  responsibleId,
+}: IAnalyticsComparisonDateRange & IFilterByResponsible): Promise<
+  TJobsChangePercentage | Error
+> => {
   try {
-    const urlRelativa = `/analytics/jobs-change-percentage?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}`;
+    const urlRelativa = `/analytics/jobs-change-percentage?startDate=${startDate}&endDate=${endDate}&startDateComparison=${startDateComparison}&endDateComparison=${endDateComparison}&${responsibleId ? `responsibleId=${responsibleId}` : ""}`;
     const { data } = await Api.get<TJobsChangePercentage>(urlRelativa);
     return data ? data : new Error("Erro ao buscar os registros");
   } catch (error) {
@@ -110,9 +125,12 @@ const getJobsChangePercentage = async ({
 const getUsersJobsStats = async ({
   startDate,
   endDate,
-}: IAnalyticsDateRange): Promise<IUserJobsStats | Error> => {
+  responsibleId,
+}: IAnalyticsDateRange & IFilterByResponsible): Promise<
+  IUserJobsStats | Error
+> => {
   try {
-    const urlRelativa = `/analytics/user-jobs-stats?startDate=${startDate}&endDate=${endDate}`;
+    const urlRelativa = `/analytics/user-jobs-stats?startDate=${startDate}&endDate=${endDate}&${responsibleId ? `responsibleId=${responsibleId}` : ""}`;
     const { data } = await Api.get<IUserJobsStats>(urlRelativa);
     return data ? data : new Error("Erro ao buscar os registros");
   } catch (error) {

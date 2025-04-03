@@ -109,7 +109,7 @@ export const GeneralInfo = () => {
     setError(null);
 
     Promise.all([
-      AnalyticsService.getRemainingJobs(),
+      AnalyticsService.getRemainingJobs({}),
       AnalyticsService.getJobsAverageTime({ ...period, ...comparisonPeriod }),
       AnalyticsService.getJobsChangePercentage({
         ...period,
