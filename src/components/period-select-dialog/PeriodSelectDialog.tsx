@@ -1,12 +1,5 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Stack,
-} from "@mui/material";
+import { Box, Button, Dialog, Grid2, Stack, Typography } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { ptBR } from "date-fns/locale";
@@ -71,8 +64,20 @@ export const PeriodSelectDialog = forwardRef<
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
       <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
-        <DialogTitle>{title}</DialogTitle>
-        <DialogContent>
+        <Box
+          sx={{
+            bgcolor: "primary.main",
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h3" textAlign="center" color="text.secondary">
+            {title}
+          </Typography>
+        </Box>
+        <Box sx={{ p: 4 }}>
           <Stack spacing={3} my={2}>
             <DatePicker
               label="Data Inicial"
@@ -89,17 +94,32 @@ export const PeriodSelectDialog = forwardRef<
               maxDate={maxDate}
             />
           </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button
-            onClick={handleConfirm}
-            variant="contained"
-            disabled={!values.startDate || !values.endDate}
-          >
-            Confirmar
-          </Button>
-        </DialogActions>
+        </Box>
+        <Grid2 container spacing={2} sx={{ px: 4, pb: 4 }}>
+          <Grid2 size={{ xs: 12, sm: 6 }}>
+            <Button
+              fullWidth
+              variant="contained"
+              color="secondary"
+              disableElevation
+              disabled={!values.startDate || !values.endDate}
+              onClick={handleConfirm}
+            >
+              Salvar
+            </Button>
+          </Grid2>
+          <Grid2 size={{ xs: 12, sm: 6 }}>
+            <Button
+              fullWidth
+              variant="contained"
+              color="error"
+              disableElevation
+              onClick={handleClose}
+            >
+              Cancelar
+            </Button>
+          </Grid2>
+        </Grid2>
       </Dialog>
     </LocalizationProvider>
   );
