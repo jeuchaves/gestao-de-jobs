@@ -1,8 +1,7 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
-  Dialog,
   Divider,
   Grid2,
   Menu,
@@ -14,7 +13,6 @@ import {
   useTheme,
 } from "@mui/material";
 import { KeyboardArrowDown } from "@mui/icons-material";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 import {
   AnalyticsService,
@@ -28,7 +26,11 @@ import {
   TPeriodOption,
   usePeriodSelection,
 } from "../../../../hooks/usePeriodSelection";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import {
+  IPeriodSelectDialogHandles,
+  IPeriodSelectValues,
+  PeriodSelectDialog,
+} from "../../../../components/period-select-dialog/PeriodSelectDialog";
 
 interface INumberTextProps {
   value?: number;
@@ -85,11 +87,6 @@ export const GeneralInfo: React.FC<IGeneralInfoProps> = ({ responsibleId }) => {
   const [averageTime, setAverageTime] = useState<TGetJobsAverageTime>();
   const [changePercent, setChangePercent] = useState<TJobsChangePercentage>();
 
-  // TO DO - Refactor this to use a single function
-  const [customStartDate, setCustomStartDate] = useState<Date | null>(null);
-  const [customEndDate, setCustomEndDate] = useState<Date | null>(null);
-  const [showCustomPicker, setShowCustomPicker] = useState(false);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -100,6 +97,14 @@ export const GeneralInfo: React.FC<IGeneralInfoProps> = ({ responsibleId }) => {
     usePeriodSelection();
 
   // INÍCIO MENU PERÍODO
+  const periodDialogRef = useRef<IPeriodSelectDialogHandles>(null);
+  const handleOpenPeriodSelectDialog = () => {
+    periodDialogRef.current?.openDialog({
+      startDate: new Date(new Date().setDate(new Date().getDate() - 7)),
+      endDate: new Date(),
+    });
+  };
+
   const [periodAnchorEl, setPeriodAnchorEl] = useState<null | HTMLElement>(
     null,
   );
@@ -113,7 +118,7 @@ export const GeneralInfo: React.FC<IGeneralInfoProps> = ({ responsibleId }) => {
   const handleSelectPeriod = (selectedPeriod: TPeriodOption) => {
     // TO DO - Refactor this to use a single function
     if (selectedPeriod === "custom") {
-      setShowCustomPicker(true);
+      handleOpenPeriodSelectDialog();
       return;
     }
     selectPeriod(selectedPeriod);
@@ -121,13 +126,12 @@ export const GeneralInfo: React.FC<IGeneralInfoProps> = ({ responsibleId }) => {
   };
 
   // TO DO - Refactor this to use a single function
-  const handleApplyCustomPeriod = () => {
-    if (customStartDate && customEndDate) {
+  const handleApplyCustomPeriod = (values: IPeriodSelectValues) => {
+    if (values.startDate && values.endDate) {
       selectPeriod("custom", {
-        start: customStartDate,
-        end: customEndDate,
+        start: values.startDate,
+        end: values.endDate,
       });
-      setShowCustomPicker(false);
       handleClosePeriodMenu();
     }
   };
@@ -233,34 +237,12 @@ export const GeneralInfo: React.FC<IGeneralInfoProps> = ({ responsibleId }) => {
             ))}
           </Menu>
 
-          <Dialog
-            open={showCustomPicker}
-            onClose={() => setShowCustomPicker(false)}
-          >
-            <Box
-              sx={{ p: 4, display: "flex", flexDirection: "column", gap: 2 }}
-            >
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="Data Inicial"
-                  value={customStartDate}
-                  onChange={(newValue) => setCustomStartDate(newValue)}
-                />
-                <DatePicker
-                  label="Data Final"
-                  value={customEndDate}
-                  onChange={(newValue) => setCustomEndDate(newValue)}
-                />
-                <Button
-                  variant="contained"
-                  onClick={handleApplyCustomPeriod}
-                  disabled={!customStartDate || !customEndDate}
-                >
-                  Aplicar
-                </Button>
-              </LocalizationProvider>
-            </Box>
-          </Dialog>
+          <PeriodSelectDialog
+            ref={periodDialogRef}
+            onConfirm={handleApplyCustomPeriod}
+            minDate={new Date(2020, 0, 1)}
+            maxDate={new Date()}
+          />
         </Box>
       </Box>
       <Grid2 container spacing={2} mt={2}>
