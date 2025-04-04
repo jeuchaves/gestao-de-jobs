@@ -85,6 +85,7 @@ export const PeriodSelectDialog = forwardRef<
               onChange={handleDateChange("startDate")}
               minDate={minDate}
               maxDate={values.endDate || maxDate}
+              sx={datePickerStyles}
             />
             <DatePicker
               label="Data Final"
@@ -92,6 +93,7 @@ export const PeriodSelectDialog = forwardRef<
               onChange={handleDateChange("endDate")}
               minDate={values.startDate || minDate}
               maxDate={maxDate}
+              sx={datePickerStyles}
             />
           </Stack>
         </Box>
@@ -124,3 +126,15 @@ export const PeriodSelectDialog = forwardRef<
     </LocalizationProvider>
   );
 });
+
+const datePickerStyles = {
+  "& .MuiInputLabel-root": {
+    color: "text.primary",
+  },
+  "& .MuiInputLabel-root.Mui-focused": {
+    color: "text.primary",
+  },
+  "& .MuiSvgIcon-root": {
+    color: "primary.main",
+  },
+};
